@@ -9,7 +9,8 @@ public static class ProjectScreenManager
 		START_SCREEN,
 		GAME_SCREEN,
 		LEVEL_COMPLETE_SCREEN,
-		GAME_OVER_SCREEN
+		GAME_OVER_SCREEN,
+		LOBBY_SCREEN
 	}
 
 	public static string[] ScreenDirectories = new string[]
@@ -17,10 +18,11 @@ public static class ProjectScreenManager
 		"Prefabs/Screens/StartScreen",
 		"Prefabs/Screens/GameScreen",
 		"Prefabs/Screens/LevelCompleteScreen",
-		"Prefabs/Screens/GameOverScreen"
+		"Prefabs/Screens/GameOverScreen",
+		"Prefabs/Screens/LobbyScreen"
 	};
 
-	public static UIScreen PushScreen(ScreenIDs screen)
+    public static UIScreen PushScreen(ScreenIDs screen)
 	{
 		string screenDir = GetScreenDirectory(screen);
 		return ScreenManager.Instance.PushScreen(screenDir);
