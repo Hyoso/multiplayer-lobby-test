@@ -32,9 +32,14 @@ public class OffsetInput : MonoBehaviour
 	}
 
 	private void Start()
-	{
-		m_controller = GetComponent<IOffsetController>();
-	}
+    {
+        if (m_controller == null)
+        {
+            m_controller = GetComponent<IOffsetController>();
+        }
+
+        Debug.Assert(m_controller != null);
+    }
 
 	private void OnEnable()
 	{

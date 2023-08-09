@@ -10,6 +10,7 @@ public class PopupGDPR : Popup
     public void AcceptGDPR()
     {
         SaveSystem.Instance.SetBool(BucketCore.GDPR_ACCEPTED, "", true);
+        SaveSystem.Instance.Save();
        
         CloseWindow();
     }
