@@ -10,7 +10,8 @@ public static class ProjectScreenManager
 		GAME_SCREEN,
 		LEVEL_COMPLETE_SCREEN,
 		GAME_OVER_SCREEN,
-		LOBBY_SCREEN
+		LOBBY_SCREEN,
+		NETWORK_SCREEN
 	}
 
 	public static string[] ScreenDirectories = new string[]
@@ -19,8 +20,9 @@ public static class ProjectScreenManager
 		"Prefabs/Screens/GameScreen",
 		"Prefabs/Screens/LevelCompleteScreen",
 		"Prefabs/Screens/GameOverScreen",
-		"Prefabs/Screens/LobbyScreen"
-	};
+		"Prefabs/Screens/LobbyScreen",
+        "Prefabs/Screens/NetworkScreen"
+    };
 
     public static UIScreen PushScreen(ScreenIDs screen)
 	{

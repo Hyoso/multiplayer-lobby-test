@@ -14,13 +14,13 @@ public class GameManager : Singleton<GameManager>
 
     protected override void Init()
 	{
-		ProjectScreenManager.PushScreen(ProjectScreenManager.ScreenIDs.LOBBY_SCREEN);
+		ProjectScreenManager.PushScreen(ProjectScreenManager.ScreenIDs.NETWORK_SCREEN);
 	}
 
     private void Awake()
     {
 		InitSaveData();
-		ProjectScreenManager.PushScreen(ProjectScreenManager.ScreenIDs.LOBBY_SCREEN);
+		ProjectScreenManager.PushScreen(ProjectScreenManager.ScreenIDs.NETWORK_SCREEN);
     }
 
     private void Start()
