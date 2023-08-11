@@ -30,45 +30,6 @@ public class GameManager : Singleton<GameManager>
 
     public void StartGame()
 	{
-        // LIST TESTS
-        //SaveSystem.Instance.SetList(BucketGameplay.EXAMPLE_KEY, "", new List<int>() { 0, 1, 2, 3, 4, 5 });
-        //SaveSystem.Instance.Save();
-
-        //List<int> intList = SaveSystem.Instance.GetList<int>(BucketGameplay.EXAMPLE_KEY);
-        //foreach (var item in intList)
-        //{
-        //	Debug.Log(item);
-        //}
-
-        // DICT TESTS
-        //SaveSystem.Instance.SetDictionary<string, int>(BucketGameplay.DICT_KEY, "", new Dictionary<string, int>()
-        //{
-        //	{ "one", 1 },
-        //	{ "two", 2 },
-        //	{ "three", 3 },
-        //});
-        //SaveSystem.Instance.Save();
-
-        //var v = SaveSystem.Instance.GetDictionary<string, int>(BucketGameplay.DICT_KEY);
-        //foreach (var item in v)
-        //{
-        //	Debug.Log("Key : " + item.Key + " value : " + item.Value);
-        //}
-
-        // INT TESTS
-        //SaveSystem.Instance.SetInt(BucketGameplay.TESTS, "", 1234);
-        //SaveSystem.Instance.Save();
-
-        //int savedInt = SaveSystem.Instance.GetInt(BucketGameplay.TESTS);
-        //Debug.Log(savedInt);
-
-        // STRING TESTS
-        //SaveSystem.Instance.SetString(BucketGameplay.TESTS, "", "TEST VAR");
-        //SaveSystem.Instance.Save();
-
-        //string saveStr = SaveSystem.Instance.GetString(BucketGameplay.TESTS);
-        //Debug.Log(saveStr);
-
         LoadLevel();
 
         ProjectScreenManager.ReplaceScreen(ProjectScreenManager.ScreenIDs.GAME_SCREEN);

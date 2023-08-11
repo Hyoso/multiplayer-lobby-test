@@ -28,12 +28,13 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
 
     public void OffsetControlChanged(Vector2 offset)
     {
-        m_rigidbody.AddForce(new Vector3(offset.x, offset.y, 0f) * speed, ForceMode2D.Impulse);
-        //m_characterObject.transform.position += new Vector3(offset.x, offset.y, 0f);
+        Vector3 dir = new Vector3(offset.x, offset.y, 0f);
+        m_rigidbody.velocity = dir * speed;
     }
 
     public void OffsetControlStopped()
     {
+        m_rigidbody.velocity = Vector3.zero;
     }
 
     public void OffsetControlStart()

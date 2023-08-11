@@ -11,6 +11,23 @@ public static class Coroutines
 		callback?.Invoke();
 	}
 
+	public static IEnumerator Loop(float seconds, Func<bool> loopFunction)
+	{
+		WaitForSeconds delay = new WaitForSeconds(seconds);
+
+		while (true)
+		{
+			yield return delay;
+
+			bool continueLoop = loopFunction.Invoke();
+
+            if (!continueLoop)
+            {
+				break;
+            }
+        }
+	}
+
 	public static IEnumerator WaitForFrames(int frames, Action callback)
 	{
 		int frameCounter= 0;
