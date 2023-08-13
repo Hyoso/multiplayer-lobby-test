@@ -15,4 +15,8 @@ MonoBehaviour:
   levels:
   - {fileID: 102900000, guid: d05720d6645980040b7d862b50210d7b, type: 3}
   levelNames:
-  - ExampleScene 1
+  - ExampleLevel 1
+  networkObjects: {fileID: 11400000, guid: 8ea2ffcebf17e5f4f80937cb1d9b8f53, type: 2}
+  networkObjectsListDisplay:
+  - Player
+  - Bullet

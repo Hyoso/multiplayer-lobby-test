@@ -56,7 +56,19 @@ public class Character : NetworkBehaviour
                 netStr = "string 2"
             };
         }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            ShootBulletServerRPC();
+        }
 
         m_characterController.UpdateMovement();
+    }
+
+    [ServerRpc]
+    private void ShootBulletServerRPC()
+    {
+        GameObject prefab = AssetsConfig.Instance.GetNetworkObjectWithName("Bullet");
+        GameObject spawnedGo = Instantiate(prefab);
+        spawnedGo.GetComponent<NetworkObject>().Spawn(true);
     }
 }
