@@ -26,6 +26,8 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
 		GDPRManager.Instance.CheckShowGDPR();
+
+        GameNetworkManager.Instance.StartOffline();
     }
 
     public void StartGame()

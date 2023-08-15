@@ -17,31 +17,31 @@ public class AssetsConfig : GenericConfig<AssetsConfig>
 	[Header("Network")]
     public NetworkPrefabsList networkObjects;
 	[ReadOnly, SerializeField] private List<string> networkObjectsListDisplay = new List<string>(); // inspector only
-    [ReadOnly] public Dictionary<string, int> networkObjectDictionary = new Dictionary<string, int>();
 
 
     private void OnValidate()
     {
-		levelNames = new List<string>();
-		foreach (var item in levels)
+		if (Application.isEditor)
 		{
-			levelNames.Add(item.name);
-		}
+            levelNames = new List<string>();
+            foreach (var item in levels)
+            {
+                levelNames.Add(item.name);
+            }
 
-        networkObjectDictionary = new Dictionary<string, int>();
-		networkObjectsListDisplay = new List<string>();
+            networkObjectsListDisplay = new List<string>();
 
-        for (int i = 0; i < networkObjects.PrefabList.Count; i++)
-		{
-			networkObjectDictionary.Add(networkObjects.PrefabList[i].Prefab.name, i);
-			networkObjectsListDisplay.Add(networkObjects.PrefabList[i].Prefab.name);
+            for (int i = 0; i < networkObjects.PrefabList.Count; i++)
+            {
+                networkObjectsListDisplay.Add(networkObjects.PrefabList[i].Prefab.name);
+            }
         }
     }
 
 
 	public GameObject GetNetworkObjectWithName(string name)
 	{
-		int idx = networkObjectDictionary[name];
+		int idx = networkObjectsListDisplay.FindIndex((x) => x == name);
 
         NetworkPrefab prefab = networkObjects.PrefabList[idx];
 		GameObject go = prefab.Prefab;

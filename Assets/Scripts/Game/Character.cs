@@ -1,8 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using NaughtyAttributes;
+using Unity.Networking.Transport;
+using System.Data;
 
 public class Character : NetworkBehaviour
 {
@@ -19,6 +23,9 @@ public class Character : NetworkBehaviour
     }
 
 	[SerializeField] private PlayerSO m_characterSO;
+    [SerializeField] private ClientConnectionHandler m_connectionHandler;
+
+	private CharacterBaseSO m_characterController;
 
 	private NetworkVariable<CustomNetworkData> m_randomNumber =  new NetworkVariable<CustomNetworkData>(
         new CustomNetworkData
@@ -26,27 +33,28 @@ public class Character : NetworkBehaviour
             netInt = 0,
             netStr = "new name"
         }, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-	private CharacterBaseSO m_characterController;
+
+    private void Awake()
+    {
+        SetupCharacter();
+    }
+
+    private void Start()
+    {
+        //m_connectionHandler.SetClientPlayerPrefab(0);
+    }
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
-        m_characterController = Instantiate(m_characterSO);
-        m_characterController.SetCharacterObject(this.gameObject);
-
-        m_characterController.Init();
-
-        m_randomNumber.OnValueChanged += (CustomNetworkData prevVal, CustomNetworkData newVal) =>
-        {
-            Debug.Log(OwnerClientId +  " - "  + newVal.netInt + " " + newVal.netStr);
-        };
+        SetupNetwork();
     }
 
-	private void Update()
+    private void Update()
 	{
-		if (!IsOwner)
-			return;
+        if (!IsOwner)
+            return;
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -64,11 +72,32 @@ public class Character : NetworkBehaviour
         m_characterController.UpdateMovement();
     }
 
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
+
     [ServerRpc]
     private void ShootBulletServerRPC()
     {
         GameObject prefab = AssetsConfig.Instance.GetNetworkObjectWithName("Bullet");
         GameObject spawnedGo = Instantiate(prefab);
         spawnedGo.GetComponent<NetworkObject>().Spawn(true);
+    }
+
+    private void SetupNetwork()
+    {
+        m_randomNumber.OnValueChanged += (CustomNetworkData prevVal, CustomNetworkData newVal) =>
+        {
+            Debug.Log(OwnerClientId + " - " + newVal.netInt + " " + newVal.netStr);
+        };
+    }
+
+    private void SetupCharacter()
+    {
+        m_characterController = Instantiate(m_characterSO);
+        m_characterController.SetCharacterObject(this.gameObject);
+
+        m_characterController.Init();
     }
 }

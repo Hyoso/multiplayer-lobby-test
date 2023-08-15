@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_characterSO: {fileID: 11400000, guid: e36d2bee69d55504f9b7abe30eb621ce, type: 2}
+  m_connectionHandler: {fileID: 0}
 --- !u!114 &8155896888633642068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 067eba133fc189d44a14099861ba1bec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_deadZone: 0.05
+  m_deadZone: 0
   m_factor: 1
 --- !u!114 &1749734428778547347
 MonoBehaviour:
