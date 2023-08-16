@@ -57,10 +57,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     [Command]
     public void StopHost()
     {
-        if (NetworkManager.Singleton.IsHost)
-        {
-            NetworkManager.Singleton.Shutdown();
-        }
+        StopHostSequence();
 
         StartCoroutine(WaitAndReloadOfflineHost());
     }
@@ -77,10 +74,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     {
         m_creatingRelay = true;
 
-        if (NetworkManager.Singleton.IsHost)
-        {
-            NetworkManager.Singleton.Shutdown();
-        }
+        StopHostSequence();
 
         while (NetworkManager.Singleton.ShutdownInProgress)
         {
@@ -117,10 +111,9 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     [Command]
     public async void JoinHost(string joinCode)
     {
-        if (NetworkManager.Singleton.IsHost)
-        {
-            NetworkManager.Singleton.Shutdown();
-        }
+        // unload clients game world
+        GameNetworkSceneManager.Instance.UnloadScene();
+        StopHostSequence();
 
         try
         {
@@ -132,5 +125,13 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
         }
 
         m_relayController.JoinRelay(joinCode);
+    }
+
+    private void StopHostSequence()
+    {
+        if (NetworkManager.Singleton.IsHost)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
     }
 }
