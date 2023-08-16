@@ -31,16 +31,6 @@ public class OffsetInput : MonoBehaviour
 		m_controller = null;
 	}
 
-	private void Start()
-    {
-        if (m_controller == null)
-        {
-            m_controller = GetComponent<IOffsetController>();
-        }
-
-        Debug.Assert(m_controller != null);
-    }
-
 	private void OnEnable()
 	{
 		UITouchArea.Input += UITouchArea_Input;

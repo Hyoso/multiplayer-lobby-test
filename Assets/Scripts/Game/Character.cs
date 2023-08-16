@@ -23,7 +23,6 @@ public class Character : NetworkBehaviour
     }
 
 	[SerializeField] private PlayerSO m_characterSO;
-    [SerializeField] private ClientConnectionHandler m_connectionHandler;
 
 	private CharacterBaseSO m_characterController;
 
@@ -48,7 +47,7 @@ public class Character : NetworkBehaviour
     {
         base.OnNetworkSpawn();
 
-        SetupNetwork();
+        SetupNetworkSettings();
     }
 
     private void Update()
@@ -85,7 +84,7 @@ public class Character : NetworkBehaviour
         spawnedGo.GetComponent<NetworkObject>().Spawn(true);
     }
 
-    private void SetupNetwork()
+    private void SetupNetworkSettings()
     {
         m_randomNumber.OnValueChanged += (CustomNetworkData prevVal, CustomNetworkData newVal) =>
         {

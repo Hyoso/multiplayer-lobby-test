@@ -1,7 +1,9 @@
+using NaughtyAttributes;
 using QFSW.QC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -9,49 +11,38 @@ using UnityEngine;
 
 public class GameNetworkManager : Singleton<GameNetworkManager>
 {
+    public struct LastPlayerState
+    {
+        public Vector3 position;
+        public Vector3 rotation;
+
+        // anything else
+    }
+
     [SerializeField] private RelayController m_relayController;
-    [SerializeField] private GameObject m_player;
-    [SerializeField] private GameObject m_playerPrefab;
+    [SerializeField] private ClientConnectionHandler m_connectionHandler;
+    [ReadOnly, SerializeField] private GameObject m_player;
+    [SerializeField] private GameObject m_tmpCharacterDisplayPrefab;
+
+    public bool creatingRelay { get { return m_creatingRelay; } set { } }
+    private bool m_creatingRelay;
+
+    public LastPlayerState lastPlayerState { get { return m_lastPlayerState; } set { } }
+    private LastPlayerState m_lastPlayerState;
 
     protected override void Init() { }
 
     private void Start()
     {
-        //NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
     }
 
-    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+    private void OnDestroy()
     {
-        // The client identifier to be authenticated
-        var clientId = request.ClientNetworkId;
-
-        // Additional connection data defined by user code
-        var connectionData = request.Payload;
-
-        // Your approval logic determines the following values
-        response.Approved = true;
-        response.CreatePlayerObject = true;
-
-        // The Prefab hash value of the NetworkPrefab, if null the default NetworkManager player Prefab is used
-        response.PlayerPrefabHash = null;
-
-        // Position to spawn the player object (if null it uses default of Vector3.zero)
-        response.Position = Vector3.zero;
-
-        // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)
-        response.Rotation = Quaternion.identity;
-
-        // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.Reason
-        // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
-        //response.Reason = "Some reason for not approving the client";
-
-        // If additional approval steps are needed, set this to true until the additional steps are complete
-        // once it transitions from true to false the connection approval response will be processed.
-        response.Pending = false;
     }
 
-    private void OnClientConnectedCallback(ulong client)
+    public void SetLastPlayerState(LastPlayerState state)
     {
+        m_lastPlayerState = state;
     }
 
     [Command]
@@ -64,12 +55,41 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     }
 
     [Command]
-    public async void StartHost()
+    public void StopHost()
     {
         if (NetworkManager.Singleton.IsHost)
         {
             NetworkManager.Singleton.Shutdown();
         }
+
+        StartCoroutine(WaitAndReloadOfflineHost());
+    }
+
+    private IEnumerator WaitAndReloadOfflineHost()
+    {
+        yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress);
+
+        StartOffline();
+    }
+
+    [Command]
+    public async void StartHost()
+    {
+        m_creatingRelay = true;
+
+        if (NetworkManager.Singleton.IsHost)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+
+        while (NetworkManager.Singleton.ShutdownInProgress)
+        {
+            await Task.Delay(25);
+        }
+
+        GameObject temporaryCharacterDisplay = Instantiate(m_tmpCharacterDisplayPrefab);
+        temporaryCharacterDisplay.transform.position = m_lastPlayerState.position;
+        temporaryCharacterDisplay.transform.eulerAngles = m_lastPlayerState.rotation;
 
         try
         {
@@ -88,6 +108,10 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
         {
             Debug.LogException(e);
         }
+
+        Destroy(temporaryCharacterDisplay);
+
+        m_creatingRelay = false;
     }
 
     [Command]

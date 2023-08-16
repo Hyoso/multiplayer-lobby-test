@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class ClientConnectionHandler : NetworkBehaviour
 {
+    [SerializeField] private GameObject m_playerPrefab;
+
     //public List<uint> AlternatePlayerPrefabs;
 
     //public void SetClientPlayerPrefab(int index)

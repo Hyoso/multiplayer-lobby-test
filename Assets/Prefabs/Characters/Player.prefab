@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_characterSO: {fileID: 11400000, guid: e36d2bee69d55504f9b7abe30eb621ce, type: 2}
-  m_connectionHandler: {fileID: 0}
 --- !u!114 &8155896888633642068
 MonoBehaviour:
   m_ObjectHideFlags: 0
