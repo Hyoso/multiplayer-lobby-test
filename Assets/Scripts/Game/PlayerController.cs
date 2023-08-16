@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
+    // only server will know this
     [SerializeField] private GameObject m_spawnedPlayerObject;
     [SerializeField] private GameObject m_playerPrefab;
 

@@ -103,13 +103,26 @@ public class GameNetworkSceneManager : NetworkSingleton<GameNetworkSceneManager>
         }
     }
 
-    public void UnloadScene()
+    public void UnloadScene(bool forceUnload = false)
     {
         // Assure only the server calls this when the NetworkObject is
         // spawned and the scene is loaded.
-        if (!IsServer || !IsSpawned || !m_LoadedScene.IsValid() || !m_LoadedScene.isLoaded)
+     
+        // force if client disconnects
+        if (!forceUnload)
         {
-            return;
+            if (!IsServer || !IsSpawned || !m_LoadedScene.IsValid() || !m_LoadedScene.isLoaded)
+            {
+                return;
+            }
+        }
+        // still need to do additional checks to avoid crash
+        else
+        {
+            if (!IsSpawned || !m_LoadedScene.IsValid())
+            {
+                return;
+            }
         }
 
         // Unload the scene

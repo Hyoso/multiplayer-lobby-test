@@ -109,6 +109,19 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     }
 
     [Command]
+    public void DisconnectFromHost()
+    {
+        //GameNetworkSceneManager.Instance.UnloadScene(true);
+
+        NetworkManager.Singleton.Shutdown();
+
+        ProjectSceneManager.Instance.UnloadScene("GameScene");
+
+        // restart offline gameplay sequence
+        StartCoroutine(WaitAndReloadOfflineHost());
+    }
+
+    [Command]
     public async void JoinHost(string joinCode)
     {
         // unload clients game world
