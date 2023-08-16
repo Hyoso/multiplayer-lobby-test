@@ -84,7 +84,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
 
         while (NetworkManager.Singleton.ShutdownInProgress)
         {
-            await Task.Delay(25);
+            await Task.Delay(5);
         }
 
         GameObject temporaryCharacterDisplay = Instantiate(m_tmpCharacterDisplayPrefab);

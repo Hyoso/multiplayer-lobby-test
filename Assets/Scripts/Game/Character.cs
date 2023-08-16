@@ -48,6 +48,22 @@ public class Character : NetworkBehaviour
         base.OnNetworkSpawn();
 
         SetupNetworkSettings();
+        LoadLastState();
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+
+
+        if (IsOwner)
+        {
+            GameNetworkManager.Instance.SetLastPlayerState(new GameNetworkManager.LastPlayerState
+            {
+                position = transform.position,
+                rotation = transform.eulerAngles
+            });
+        }
     }
 
     private void Update()
@@ -82,6 +98,17 @@ public class Character : NetworkBehaviour
         GameObject prefab = AssetsConfig.Instance.GetNetworkObjectWithName("Bullet");
         GameObject spawnedGo = Instantiate(prefab);
         spawnedGo.GetComponent<NetworkObject>().Spawn(true);
+    }
+
+    // for server respawn after starting host
+    private void LoadLastState()
+    {
+        if (IsServer)
+        {
+            var lastState = GameNetworkManager.Instance.lastPlayerState;
+            transform.position = lastState.position;
+            transform.eulerAngles = lastState.rotation;
+        }
     }
 
     private void SetupNetworkSettings()
