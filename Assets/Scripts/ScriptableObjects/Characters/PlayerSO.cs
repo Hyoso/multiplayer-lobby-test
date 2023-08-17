@@ -31,15 +31,15 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
     public void OffsetControlChanged(Vector2 offset)
     {
         Vector3 dir = new Vector3(offset.x, offset.y, 0f);
-        //m_rigidbody.velocity = dir * speed;
+        m_rigidbody.velocity = dir * speed;
 
-        Vector3 moveAmount = dir * speed * Time.deltaTime;
-        m_transform.Translate(moveAmount, Space.World);
+        //Vector3 moveAmount = dir * speed * Time.deltaTime;
+        //m_transform.Translate(moveAmount, Space.World);
     }
 
     public void OffsetControlStopped()
     {
-        //m_rigidbody.velocity = Vector3.zero;
+        m_rigidbody.velocity = Vector3.zero;
     }
 
     public void OffsetControlStart()
