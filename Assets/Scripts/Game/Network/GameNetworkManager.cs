@@ -34,10 +34,21 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
 
     private void Start()
     {
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
     }
 
     private void OnDestroy()
     {
+    }
+
+    private void OnClientDisconnectCallback(ulong clientId)
+    {
+        if (clientId == NetworkManager.ServerClientId)
+        {
+            // server shutting down
+            ProjectSceneManager.Instance.UnloadScene("GameScene");
+            StartCoroutine(WaitAndReloadOfflineHost());
+        }
     }
 
     public void SetLastPlayerState(LastPlayerState state)
