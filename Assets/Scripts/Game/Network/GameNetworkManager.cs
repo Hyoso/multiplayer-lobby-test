@@ -122,8 +122,6 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     [Command]
     public void DisconnectFromHost()
     {
-        //GameNetworkSceneManager.Instance.UnloadScene(true);
-
         NetworkManager.Singleton.Shutdown();
 
         ProjectSceneManager.Instance.UnloadScene("GameScene");
@@ -136,6 +134,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     public async void JoinHost(string joinCode)
     {
         // unload clients game world
+        m_lastPlayerState = new LastPlayerState();
         GameNetworkSceneManager.Instance.UnloadScene();
         StopHostSequence();
 
