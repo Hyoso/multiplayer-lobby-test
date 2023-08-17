@@ -138,6 +138,8 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
         GameNetworkSceneManager.Instance.UnloadScene();
         StopHostSequence();
 
+        // show transition
+
         try
         {
             await m_relayController.SignIn();

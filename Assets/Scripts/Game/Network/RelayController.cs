@@ -69,6 +69,17 @@ public class RelayController : MonoBehaviour
         }
         catch (RelayServiceException e)
         {
+            // failed to join using joincode, joincode is wrong?
+
+            // show error message
+
+            // go back to offline mode
+            PopupError popup = PopupsManager.Instance.CreatePopup(PopupError.POPUP_PATH).GetComponent<PopupError>();
+            popup.Init("Failed to join host", "Back Home", () =>
+            {
+                GameNetworkManager.Instance.StartOffline();
+            });
+
             Debug.Log(e);
         }
     }
