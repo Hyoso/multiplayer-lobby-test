@@ -8,6 +8,7 @@ public class GameManager : Singleton<GameManager>
 
 	[SerializeField] private Canvas m_canvas;
     [SerializeField] private int m_levelOverride = -1;
+    [SerializeField] private PlayerCamera m_playerCam;
 
     private LevelRoot m_levelRoot;
     private int m_level;
@@ -65,6 +66,11 @@ public class GameManager : Singleton<GameManager>
     public void RegisterLevelRoot(LevelRoot root)
     {
         m_levelRoot = root;
+    }
+
+    public void SetupPlayerCam(GameObject player)
+    {
+        m_playerCam.AssignPlayer(player);
     }
 
     private void InitSaveData()

@@ -117,6 +117,11 @@ public class Character : NetworkBehaviour
         {
             Debug.Log(OwnerClientId + " - " + newVal.netInt + " " + newVal.netStr);
         };
+
+        if (IsOwner)
+        {
+            GameManager.Instance.SetupPlayerCam(this.gameObject);
+        }
     }
 
     private void SetupCharacter()
