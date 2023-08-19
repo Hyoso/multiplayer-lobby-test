@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerSO : CharacterBaseSO, IOffsetController
 {
     public float speed = 1f;
+    public float maxSpeed = 0.5f;
 
     private OffsetInput m_offsetInput;
     private Rigidbody2D m_rigidbody;
@@ -31,7 +32,9 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
     public void OffsetControlChanged(Vector2 offset)
     {
         Vector3 dir = new Vector3(offset.x, offset.y, 0f);
-        m_rigidbody.velocity = dir * speed;
+        Vector3 moveAmount = dir * speed;
+        moveAmount = Vector3.ClampMagnitude(moveAmount, maxSpeed);
+        m_rigidbody.velocity = moveAmount;
 
         //Vector3 moveAmount = dir * speed * Time.deltaTime;
         //m_transform.Translate(moveAmount, Space.World);
