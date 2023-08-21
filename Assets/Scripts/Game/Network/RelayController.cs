@@ -41,6 +41,8 @@ public class RelayController : MonoBehaviour
 
             Debug.Log("Join code: " + joinCode);
 
+            GameplayEvents.SendonOnlineHostStarted(joinCode);
+
             RelayServerData relayData = new RelayServerData(alloc, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayData);
 

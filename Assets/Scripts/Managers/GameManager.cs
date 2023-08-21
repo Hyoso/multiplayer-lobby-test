@@ -21,7 +21,6 @@ public class GameManager : Singleton<GameManager>
     private void Awake()
     {
 		InitSaveData();
-		ProjectScreenManager.PushScreen(ProjectScreenManager.ScreenIDs.NETWORK_SCREEN);
     }
 
     private void Start()

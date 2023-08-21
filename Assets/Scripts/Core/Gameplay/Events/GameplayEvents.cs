@@ -46,4 +46,10 @@ public static partial class GameplayEvents
 	{
 		LevelLoadedEvent?.Invoke();
 	}
+
+	public static event StringDelegate onOnlineHostStarted;
+	public static void SendonOnlineHostStarted(string joinCode)
+	{
+		onOnlineHostStarted?.Invoke(joinCode);
+    }
 }

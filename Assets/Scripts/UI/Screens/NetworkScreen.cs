@@ -13,7 +13,7 @@ public class NetworkScreen : UIScreen
 
     public void StartHost()
     {
-        NetworkManager.Singleton.StartHost();
+        GameNetworkManager.Instance.StartHost();
     }
 
     public void StartClient()
