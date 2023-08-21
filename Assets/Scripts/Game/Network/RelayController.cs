@@ -55,7 +55,7 @@ public class RelayController : MonoBehaviour
     }
 
     [Command]
-    public async void JoinRelay(string joinCode)
+    public async Task JoinRelay(string joinCode)
     {
         try
         {

@@ -52,4 +52,11 @@ public static partial class GameplayEvents
 	{
 		onOnlineHostStarted?.Invoke(joinCode);
     }
+
+	public static event StringDelegate onJoinHost;
+	public static void SendonJoinHost(string joinCode)
+	{
+		onJoinHost?.Invoke(joinCode);
+
+    }
 }

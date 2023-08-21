@@ -12,8 +12,39 @@ namespace Unity.Services.Samples.Friends.UGUI
         [SerializeField] Image m_PresenceColorImage = null;
 
         public Button joinButton = null;
+        public Button leaveButton = null;
         public Button removeFriendButton = null;
         public Button blockFriendButton = null;
+
+        private string m_joinCode;
+        private string m_activity;
+        private PresenceAvailabilityOptions m_presence;
+
+        private void Awake()
+        {
+            joinButton.onClick.AddListener(() => joinButton.gameObject.SetActive(false));
+            leaveButton.onClick.AddListener(() => {
+
+                GameNetworkManager.Instance.DisconnectFromHost();
+                UpdateJoinButton();
+                leaveButton.gameObject.SetActive(false);
+            });
+
+            GameplayEvents.onJoinHost += GameplayEvents_onJoinHost;
+        }
+
+        private void OnDestroy()
+        {
+            GameplayEvents.onJoinHost -= GameplayEvents_onJoinHost;
+        }
+
+        private void GameplayEvents_onJoinHost(string joinCode)
+        {
+            if (joinCode == m_joinCode)
+            {
+                leaveButton.gameObject.SetActive(true);
+            }
+        }
 
         public void Init(string playerName, PresenceAvailabilityOptions presenceAvailabilityOptions, string activity)
         {
@@ -22,10 +53,18 @@ namespace Unity.Services.Samples.Friends.UGUI
             var presenceColor = ColorUtils.GetPresenceColor(index);
             m_PresenceColorImage.color = presenceColor;
             m_ActivityText.text = activity;
+            m_presence = presenceAvailabilityOptions;
+            m_activity = activity;
 
-            if (presenceAvailabilityOptions == PresenceAvailabilityOptions.ONLINE)
+            UpdateJoinButton();
+        }
+
+        private void UpdateJoinButton()
+        {
+            if (m_presence == PresenceAvailabilityOptions.ONLINE)
             {
-                joinButton.gameObject.SetActive(activity != RelationshipsManager.DEFAULT_ACTIVITY);
+                m_joinCode = m_activity;
+                joinButton.gameObject.SetActive(m_activity != RelationshipsManager.DEFAULT_ACTIVITY);
             }
             else
             {

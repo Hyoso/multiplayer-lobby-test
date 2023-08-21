@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+using Unity.Services.Authentication;
+using Unity.Services.Relay;
 using UnityEngine;
 
 public class GameNetworkManager : Singleton<GameNetworkManager>
@@ -24,10 +26,13 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     [ReadOnly, SerializeField] private GameObject m_player;
     [SerializeField] private GameObject m_tmpCharacterDisplayPrefab;
 
-    public bool creatingRelay { get { return m_creatingRelay; } set { } }
+    public string joinCode { get { return m_joinCode; } private set { } }
+    private string m_joinCode;
+
+    public bool creatingRelay { get { return m_creatingRelay; } private set { } }
     private bool m_creatingRelay;
 
-    public LastPlayerState lastPlayerState { get { return m_lastPlayerState; } set { } }
+    public LastPlayerState lastPlayerState { get { return m_lastPlayerState; } private set { } }
     private LastPlayerState m_lastPlayerState;
 
     protected override void Init() { }
@@ -133,6 +138,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     [Command]
     public async void JoinHost(string joinCode)
     {
+        m_joinCode = "";
         // unload clients game world
         m_lastPlayerState = new LastPlayerState();
         GameNetworkSceneManager.Instance.UnloadScene();
@@ -144,12 +150,22 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
         {
             await m_relayController.SignIn();
         }
-        catch (Exception e)
+        catch (AuthenticationException e)
         {
             Debug.LogException(e);
         }
 
-        m_relayController.JoinRelay(joinCode);
+        try
+        {
+            await m_relayController.JoinRelay(joinCode);
+            m_joinCode = joinCode;
+            GameplayEvents.SendonJoinHost(m_joinCode);
+        }
+        catch (RelayServiceException e)
+        {
+
+            Debug.Log(e);
+        }
     }
 
     private void StopHostSequence()
