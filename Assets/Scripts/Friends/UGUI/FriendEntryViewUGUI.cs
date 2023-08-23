@@ -1,3 +1,6 @@
+using System;
+using System.Reflection;
+using System.Runtime.Serialization;
 using TMPro;
 using Unity.Services.Friends.Models;
 using UnityEngine;
@@ -5,6 +8,14 @@ using UnityEngine.UI;
 
 namespace Unity.Services.Samples.Friends.UGUI
 {
+    [System.Serializable]
+    public class FriendEntryData
+    {
+        public string joinCode;
+        public string Activity;
+        public PresenceAvailabilityOptions availability;
+    }
+
     public class FriendEntryViewUGUI : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI m_NameText = null;
@@ -16,9 +27,8 @@ namespace Unity.Services.Samples.Friends.UGUI
         public Button removeFriendButton = null;
         public Button blockFriendButton = null;
 
-        private string m_joinCode;
-        private string m_activity;
         private PresenceAvailabilityOptions m_presence;
+        private FriendEntryData m_entryData;
 
         private void Awake()
         {
@@ -30,46 +40,60 @@ namespace Unity.Services.Samples.Friends.UGUI
                 leaveButton.gameObject.SetActive(false);
             });
 
-            GameplayEvents.onJoinHost += GameplayEvents_onJoinHost;
+            GameplayEvents.onJoinHostSuccess += GameplayEvents_onJoinHost;
         }
 
         private void OnDestroy()
         {
-            GameplayEvents.onJoinHost -= GameplayEvents_onJoinHost;
+            GameplayEvents.onJoinHostSuccess -= GameplayEvents_onJoinHost;
         }
 
         private void GameplayEvents_onJoinHost(string joinCode)
         {
-            if (joinCode == m_joinCode)
+            if (joinCode == m_entryData.joinCode)
             {
                 leaveButton.gameObject.SetActive(true);
             }
         }
 
-        public void Init(string playerName, PresenceAvailabilityOptions presenceAvailabilityOptions, string activity)
+        public void Init(string playerName, PresenceAvailabilityOptions presenceAvailabilityOptions, string json)
         {
+            m_entryData = JsonUtility.FromJson<FriendEntryData>(json);
+
             m_NameText.text = playerName;
             var index = (int)presenceAvailabilityOptions - 1;
             var presenceColor = ColorUtils.GetPresenceColor(index);
             m_PresenceColorImage.color = presenceColor;
-            m_ActivityText.text = activity;
             m_presence = presenceAvailabilityOptions;
-            m_activity = activity;
+            if (m_entryData.availability == PresenceAvailabilityOptions.OFFLINE)
+            {
+                m_ActivityText.text = "Last online: " + m_entryData.Activity;
+            }
+            else
+            {
+                m_ActivityText.text = GetEnumMemberValue(m_entryData.availability);
+            }
 
             UpdateJoinButton();
         }
 
         private void UpdateJoinButton()
         {
-            if (m_presence == PresenceAvailabilityOptions.ONLINE)
+            bool enableJoinButton = !string.IsNullOrEmpty(m_entryData.joinCode);
+            joinButton.gameObject.SetActive(enableJoinButton);
+        }
+
+        private string GetEnumMemberValue(Enum enumValue)
+        {
+            Type enumType = enumValue.GetType();
+            MemberInfo memberInfo = enumType.GetMember(enumValue.ToString())[0];
+
+            EnumMemberAttribute enumMemberAttribute = memberInfo.GetCustomAttribute<EnumMemberAttribute>();
+            if (enumMemberAttribute != null)
             {
-                m_joinCode = m_activity;
-                joinButton.gameObject.SetActive(m_activity != RelationshipsManager.DEFAULT_ACTIVITY);
+                return enumMemberAttribute.Value;
             }
-            else
-            {
-                joinButton.gameObject.SetActive(false);
-            }
+            return enumValue.ToString(); // Default to the enum's string representation
         }
     }
 }

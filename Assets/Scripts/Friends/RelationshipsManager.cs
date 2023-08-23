@@ -7,6 +7,7 @@ using Unity.Services.Authentication;
 using Unity.Services.Friends;
 using Unity.Services.Friends.Exceptions;
 using Unity.Services.Friends.Models;
+using Unity.Services.Samples.Friends.UGUI;
 using UnityEngine;
 
 namespace Unity.Services.Samples.Friends
@@ -32,9 +33,12 @@ namespace Unity.Services.Samples.Friends
         IBlockedListView m_BlockListView;
 
         PlayerProfile m_LoggedPlayerProfile;
+        static FriendEntryData m_localEntryData;
+
 
         private void Awake()
         {
+            m_localEntryData = new FriendEntryData();
             GameplayEvents.onOnlineHostStarted += GameplayEvents_onOnlineHostStarted;
         }
 
@@ -101,17 +105,24 @@ namespace Unity.Services.Samples.Friends
 
         private async void GameplayEvents_onOnlineHostStarted(string joinCode)
         {
-            await SetPresence(PresenceAvailabilityOptions.ONLINE, joinCode);
+            m_localEntryData.joinCode = joinCode;
+            string friendEntryDataJson = JsonUtility.ToJson(m_localEntryData);
+
+            await SetPresence(PresenceAvailabilityOptions.ONLINE, friendEntryDataJson);
         }
 
         async Task LogInAsync()
         {
             var playerID = AuthenticationService.Instance.PlayerId;
-            //await AuthenticationService.Instance.UpdatePlayerNameAsync("somenewname");
+            await AuthenticationService.Instance.UpdatePlayerNameAsync("TESTER");
             var playerName = await AuthenticationService.Instance.GetPlayerNameAsync();
             m_LoggedPlayerProfile = new PlayerProfile(playerName, playerID);
 
-            await SetPresence(PresenceAvailabilityOptions.ONLINE, DEFAULT_ACTIVITY);
+            m_localEntryData.Activity = DEFAULT_ACTIVITY;
+            m_localEntryData.availability = PresenceAvailabilityOptions.ONLINE;
+            string friendEntryDataJson = JsonUtility.ToJson(m_localEntryData);
+
+            await SetPresence(PresenceAvailabilityOptions.ONLINE, friendEntryDataJson);
             m_LocalPlayerView.Refresh(
                 m_LoggedPlayerProfile.Name,
                 DEFAULT_ACTIVITY,
@@ -166,7 +177,11 @@ namespace Unity.Services.Samples.Friends
 
         async void SetPresenceAsync((PresenceAvailabilityOptions presence, string activity) status)
         {
-            await SetPresence(status.presence, status.activity);
+            m_localEntryData.Activity = status.activity;
+            m_localEntryData.availability = status.presence;
+            string friendEntryDataJson = JsonUtility.ToJson(m_localEntryData);
+
+            await SetPresence(status.presence, friendEntryDataJson);
             m_LocalPlayerView.Refresh(m_LoggedPlayerProfile.Name, status.activity, status.presence);
         }
 
@@ -187,18 +202,25 @@ namespace Unity.Services.Samples.Friends
 
             foreach (var friend in friends)
             {
-                string activityText;
+                string friendEntryDataJson;
                 if (friend.Presence.Availability == PresenceAvailabilityOptions.OFFLINE ||
                     friend.Presence.Availability == PresenceAvailabilityOptions.INVISIBLE)
                 {
-                    activityText = friend.Presence.LastSeen.ToShortDateString() + " " +
+                    string lastActivity = friend.Presence.LastSeen.ToShortDateString() + " " +
                                    friend.Presence.LastSeen.ToLongTimeString();
+
+                    FriendEntryData data = new FriendEntryData();
+                    data.Activity = lastActivity;
+                    data.availability = friend.Presence.Availability;
+                    friendEntryDataJson = JsonUtility.ToJson(data);
                 }
                 else
                 {
-                    activityText = friend.Presence.GetActivity<Activity>() == null
+                    string activity = friend.Presence.GetActivity<Activity>() == null
                         ? ""
                         : friend.Presence.GetActivity<Activity>().Status;
+
+                    friendEntryDataJson = activity;
                 }
 
                 var info = new FriendsEntryData
@@ -206,7 +228,7 @@ namespace Unity.Services.Samples.Friends
                     Name = friend.Profile.Name,
                     Id = friend.Id,
                     Availability = friend.Presence.Availability,
-                    Activity = activityText,
+                    Activity = friendEntryDataJson,
                 };
                 m_FriendsEntryDatas.Add(info);
             }

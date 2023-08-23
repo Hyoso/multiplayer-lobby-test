@@ -40,7 +40,7 @@ namespace Unity.Services.Samples.Friends.UGUI
 
         private void GameplayEvents_onOnlineHostStarted(string joinCode)
         {
-            m_Activity.text = joinCode;
+            m_Activity.text = "HOSTING";
         }
 
         void OnStatusChanged(int value, string activity)

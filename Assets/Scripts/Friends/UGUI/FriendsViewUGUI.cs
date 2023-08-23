@@ -29,7 +29,16 @@ namespace Unity.Services.Samples.Friends.UGUI
             foreach (var friendsEntryData in m_FriendsEntryDatas)
             {
                 var entry = Instantiate(m_FriendEntryViewPrefab, m_ParentTransform);
-                entry.Init(friendsEntryData.Name, friendsEntryData.Availability, friendsEntryData.Activity);
+
+                string activityJson = friendsEntryData.Activity;
+                entry.Init(friendsEntryData.Name, friendsEntryData.Availability, activityJson);
+               
+                FriendEntryData data = JsonUtility.FromJson<FriendEntryData>(activityJson);
+                entry.joinButton.onClick.AddListener(() =>
+                {
+                    onJoinFriend?.Invoke(data.joinCode);
+                });
+
                 entry.removeFriendButton.onClick.AddListener(() =>
                 {
                     onRemove?.Invoke(friendsEntryData.Id);
@@ -39,10 +48,6 @@ namespace Unity.Services.Samples.Friends.UGUI
                 {
                     onBlock?.Invoke(friendsEntryData.Id);
                     entry.gameObject.SetActive(false);
-                });
-                entry.joinButton.onClick.AddListener(() =>
-                {
-                    onJoinFriend?.Invoke(friendsEntryData.Activity);
                 });
                 m_FriendEntries.Add(entry);
             }

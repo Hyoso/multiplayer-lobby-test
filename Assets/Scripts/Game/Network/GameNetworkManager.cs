@@ -129,6 +129,8 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     {
         NetworkManager.Singleton.Shutdown();
 
+        GameplayEvents.SendonOnlineHostStopped();
+
         ProjectSceneManager.Instance.UnloadScene("GameScene");
 
         // restart offline gameplay sequence
@@ -142,6 +144,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
         // unload clients game world
         m_lastPlayerState = new LastPlayerState();
         GameNetworkSceneManager.Instance.UnloadScene();
+        GameplayEvents.SendonJoinHostAttempt();
         StopHostSequence();
 
         // show transition
@@ -159,7 +162,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
         {
             await m_relayController.JoinRelay(joinCode);
             m_joinCode = joinCode;
-            GameplayEvents.SendonJoinHost(m_joinCode);
+            GameplayEvents.SendonJoinHostSuccess(m_joinCode);
         }
         catch (RelayServiceException e)
         {

@@ -53,10 +53,21 @@ public static partial class GameplayEvents
 		onOnlineHostStarted?.Invoke(joinCode);
     }
 
-	public static event StringDelegate onJoinHost;
-	public static void SendonJoinHost(string joinCode)
+	public static event BasicDelegate onOnlineHostStopped;
+	public static void SendonOnlineHostStopped()
 	{
-		onJoinHost?.Invoke(joinCode);
+		onOnlineHostStopped?.Invoke();
+    }
 
+    public static event StringDelegate onJoinHostSuccess;
+	public static void SendonJoinHostSuccess(string joinCode)
+	{
+		onJoinHostSuccess?.Invoke(joinCode);
+    }
+
+	public static event BasicDelegate onJoinHostAttempt;
+    public static void SendonJoinHostAttempt()
+    {
+        onJoinHostAttempt?.Invoke();
     }
 }
