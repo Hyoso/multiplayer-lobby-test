@@ -74,7 +74,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     public void StopHost()
     {
         StopHostSequence();
-
+        GameplayEvents.SendonOnlineHostStopped();
         StartCoroutine(WaitAndReloadOfflineHost());
     }
 
@@ -128,8 +128,6 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     public void DisconnectFromHost()
     {
         NetworkManager.Singleton.Shutdown();
-
-        GameplayEvents.SendonOnlineHostStopped();
 
         ProjectSceneManager.Instance.UnloadScene("GameScene");
 

@@ -40,6 +40,7 @@ namespace Unity.Services.Samples.Friends
         {
             m_localEntryData = new FriendEntryData();
             GameplayEvents.onOnlineHostStarted += GameplayEvents_onOnlineHostStarted;
+            GameplayEvents.onOnlineHostStopped += GameplayEvents_onOnlineHostStopped;
         }
 
         async void Start()
@@ -101,11 +102,20 @@ namespace Unity.Services.Samples.Friends
         private void OnDestroy()
         {
             GameplayEvents.onOnlineHostStarted -= GameplayEvents_onOnlineHostStarted;
+            GameplayEvents.onOnlineHostStopped -= GameplayEvents_onOnlineHostStopped;
         }
 
         private async void GameplayEvents_onOnlineHostStarted(string joinCode)
         {
             m_localEntryData.joinCode = joinCode;
+            string friendEntryDataJson = JsonUtility.ToJson(m_localEntryData);
+
+            await SetPresence(PresenceAvailabilityOptions.ONLINE, friendEntryDataJson);
+        }
+
+        private async void GameplayEvents_onOnlineHostStopped()
+        {
+            m_localEntryData.joinCode = "";
             string friendEntryDataJson = JsonUtility.ToJson(m_localEntryData);
 
             await SetPresence(PresenceAvailabilityOptions.ONLINE, friendEntryDataJson);
