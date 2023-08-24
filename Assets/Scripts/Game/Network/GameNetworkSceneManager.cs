@@ -1,3 +1,4 @@
+using EasyTransition;
 using QFSW.QC;
 using System;
 using System.Collections;
@@ -47,6 +48,8 @@ public class GameNetworkSceneManager : NetworkSingleton<GameNetworkSceneManager>
         }
 
         base.OnNetworkSpawn();
+
+        TransitionManager.Instance().pauseTransitionAtCutPoint = false;
     }
 
     private void CheckStatus(SceneEventProgressStatus status, bool isLoading = true)

@@ -172,7 +172,12 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
                 Debug.Log(e);
             }
 
-            TransitionManager.Instance().pauseTransitionAtCutPoint = false;
+            // this is now in GameNetworkSceneManager.OnNetworkSpawn
+            // TransitionManager.Instance().pauseTransitionAtCutPoint = false;
+        }, 
+        () =>
+        {
+            transition.CloseWindow();
         });
     }
 
