@@ -59,6 +59,12 @@ public static partial class GameplayEvents
 		onOnlineHostStopped?.Invoke();
     }
 
+	public static event BasicDelegate onHostDisconnected;
+	public static void SendonHostDisconnected()
+	{
+		onHostDisconnected?.Invoke();
+    }
+
     public static event StringDelegate onJoinHostSuccess;
 	public static void SendonJoinHostSuccess(string joinCode)
 	{

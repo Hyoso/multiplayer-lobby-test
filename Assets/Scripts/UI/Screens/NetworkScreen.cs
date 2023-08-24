@@ -13,6 +13,7 @@ public class NetworkScreen : UIScreen
     {
         GameplayEvents.onOnlineHostStarted += GameplayEvents_onOnlineHostStarted;
         GameplayEvents.onOnlineHostStopped += GameplayEvents_onOnlineHostStopped;
+        GameplayEvents.onHostDisconnected += GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess += GameplayEvents_onJoinHost;
     }
 
@@ -20,7 +21,13 @@ public class NetworkScreen : UIScreen
     {
         GameplayEvents.onOnlineHostStarted -= GameplayEvents_onOnlineHostStarted;
         GameplayEvents.onOnlineHostStopped -= GameplayEvents_onOnlineHostStopped;
+        GameplayEvents.onHostDisconnected -= GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess -= GameplayEvents_onJoinHost;
+    }
+
+    private void GameplayEvents_onHostDisconnected()
+    {
+        m_hostBtn.SetActive(true);
     }
 
     private void GameplayEvents_onOnlineHostStopped()

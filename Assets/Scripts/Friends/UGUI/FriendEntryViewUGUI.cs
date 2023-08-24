@@ -38,6 +38,7 @@ namespace Unity.Services.Samples.Friends.UGUI
                 GameNetworkManager.Instance.DisconnectFromHost();
                 UpdateJoinButton();
                 leaveButton.gameObject.SetActive(false);
+                GameplayEvents.SendonHostDisconnected();
             });
 
             GameplayEvents.onJoinHostSuccess += GameplayEvents_onJoinHost;

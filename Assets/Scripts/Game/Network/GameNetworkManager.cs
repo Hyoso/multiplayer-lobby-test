@@ -51,9 +51,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     {
         if (clientId == NetworkManager.ServerClientId)
         {
-            // server shutting down
-            ProjectSceneManager.Instance.UnloadScene("GameScene");
-            StartCoroutine(WaitAndReloadOfflineHost());
+            DoDisconnectedFromHostTransition();
         }
     }
 
@@ -175,6 +173,32 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
             // this is now in GameNetworkSceneManager.OnNetworkSpawn
             // TransitionManager.Instance().pauseTransitionAtCutPoint = false;
         }, 
+        () =>
+        {
+            transition.CloseWindow();
+        });
+    }
+
+    private void DoDisconnectedFromHostTransition()
+    {
+        // show transition
+        PopupTransition transition = PopupsManager.Instance.CreatePopup(PopupTransition.POPUP_PATH).GetComponent<PopupTransition>();
+        transition.Init(async () =>
+        {
+            TransitionManager.Instance().pauseTransitionAtCutPoint = true;
+            // server shutting down
+            ProjectSceneManager.Instance.UnloadScene("GameScene");
+
+            await AsyncTaskUtils.WaitUntil(() => !NetworkManager.Singleton.ShutdownInProgress);
+            
+            StartOffline();
+
+            GameplayEvents.SendonHostDisconnected();
+
+            Debug.Log("Host Disconnected");
+
+            TransitionManager.Instance().pauseTransitionAtCutPoint = false;
+        },
         () =>
         {
             transition.CloseWindow();

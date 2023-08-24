@@ -3,6 +3,7 @@ using QFSW.QC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -128,8 +129,14 @@ public class GameNetworkSceneManager : NetworkSingleton<GameNetworkSceneManager>
             }
         }
 
+        SceneEventProgressStatus status = NetworkManager.SceneManager.UnloadScene(m_LoadedScene);
+        if (status == SceneEventProgressStatus.InternalNetcodeError)
+        { 
+            Debug.Log("Unloading local game scene");
+            ProjectSceneManager.Instance.UnloadScene(m_LoadedScene.name);
+        }
+
         // Unload the scene
-        var status = NetworkManager.SceneManager.UnloadScene(m_LoadedScene);
         CheckStatus(status, false);
     }
 }
