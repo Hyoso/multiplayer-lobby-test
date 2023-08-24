@@ -1,3 +1,4 @@
+using EasyTransition;
 using NaughtyAttributes;
 using QFSW.QC;
 using System;
@@ -136,37 +137,43 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     }
 
     [Command]
-    public async void JoinHost(string joinCode)
+    public void JoinHost(string joinCode)
     {
-        m_joinCode = "";
-        // unload clients game world
-        m_lastPlayerState = new LastPlayerState();
-        GameNetworkSceneManager.Instance.UnloadScene();
-        GameplayEvents.SendonJoinHostAttempt();
-        StopHostSequence();
-
         // show transition
+        PopupTransition transition = PopupsManager.Instance.CreatePopup(PopupTransition.POPUP_PATH).GetComponent<PopupTransition>();
+        transition.Init(async () =>
+        {
+            TransitionManager.Instance().pauseTransitionAtCutPoint = true;
 
-        try
-        {
-            await m_relayController.SignIn();
-        }
-        catch (AuthenticationException e)
-        {
-            Debug.LogException(e);
-        }
+            m_joinCode = "";
+            // unload clients game world
+            m_lastPlayerState = new LastPlayerState();
+            GameNetworkSceneManager.Instance.UnloadScene();
+            GameplayEvents.SendonJoinHostAttempt();
+            StopHostSequence();
 
-        try
-        {
-            await m_relayController.JoinRelay(joinCode);
-            m_joinCode = joinCode;
-            GameplayEvents.SendonJoinHostSuccess(m_joinCode);
-        }
-        catch (RelayServiceException e)
-        {
+            try
+            {
+                await m_relayController.SignIn();
+            }
+            catch (AuthenticationException e)
+            {
+                Debug.LogException(e);
+            }
 
-            Debug.Log(e);
-        }
+            try
+            {
+                await m_relayController.JoinRelay(joinCode);
+                m_joinCode = joinCode;
+                GameplayEvents.SendonJoinHostSuccess(m_joinCode);
+            }
+            catch (RelayServiceException e)
+            {
+                Debug.Log(e);
+            }
+
+            TransitionManager.Instance().pauseTransitionAtCutPoint = false;
+        });
     }
 
     private void StopHostSequence()

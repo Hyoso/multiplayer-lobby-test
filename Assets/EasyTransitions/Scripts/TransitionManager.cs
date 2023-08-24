@@ -17,6 +17,8 @@ namespace EasyTransition
         public UnityAction onTransitionCutPointReached;
         public UnityAction onTransitionEnd;
 
+        public bool pauseTransitionAtCutPoint;
+
         private static TransitionManager instance;
 
         private void Awake()
@@ -159,6 +161,8 @@ namespace EasyTransition
             yield return new WaitForSecondsRealtime(transitionTime);
 
             onTransitionCutPointReached?.Invoke();
+
+            yield return new WaitWhile(() => pauseTransitionAtCutPoint);
 
             template.GetComponent<Transition>().OnSceneLoad(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
