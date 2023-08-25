@@ -124,7 +124,7 @@ namespace Unity.Services.Samples.Friends
         async Task LogInAsync()
         {
             var playerID = AuthenticationService.Instance.PlayerId;
-            await AuthenticationService.Instance.UpdatePlayerNameAsync("TESTER");
+            //await AuthenticationService.Instance.UpdatePlayerNameAsync("TESTER");
             var playerName = await AuthenticationService.Instance.GetPlayerNameAsync();
             m_LoggedPlayerProfile = new PlayerProfile(playerName, playerID);
 
