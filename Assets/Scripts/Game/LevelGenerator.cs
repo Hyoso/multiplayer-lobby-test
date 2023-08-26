@@ -1,6 +1,7 @@
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -17,8 +18,15 @@ public class LevelGenerator : MonoBehaviour
     [Button]
     public void Generate()
     {
+        List<Vector3Int> checkDirections = new List<Vector3Int>{
+            Vector3Int.up,
+            Vector3Int.right,
+            Vector3Int.down,
+            Vector3Int.left
+        };
+
         m_dungeonMap.ClearAllTiles();
-        //AddStartRoom();
+        AddStartRoom();
 
         /// #### ALGORITHM ### ///
         /// 
@@ -33,27 +41,47 @@ public class LevelGenerator : MonoBehaviour
         ///
         /// #### ALGORITHM ### ///
 
-        Tilemap tilemap = m_tiles[0];
-        tilemap.CompressBounds();
+        //Tilemap tilemap = m_tiles[0];
+        //tilemap.CompressBounds();
 
-        var tilesInBounds = tilemap.cellBounds.allPositionsWithin;
-        int count = 0;
-        foreach (var vec3i in tilesInBounds)
+        List<Vector3Int> doorTiles = GetDoorTiles(m_dungeonMap, m_doorTile);
+
+        // random door from room 1
+        Vector3Int randDoor = doorTiles.GetRandomElementAndRemove();
+
+        // check all 4 directions for a space
+        foreach (var dir in checkDirections)
         {
-            Tile tile = tilemap.GetTile<Tile>(vec3i);
-            if (tile != null)
+            Vector3Int cellToCheck = dir + randDoor;
+            TileBase tile = m_dungeonMap.GetTile<TileBase>(cellToCheck);
+            if (tile == null)
             {
-                count++;
-            }
-            if (tile == m_doorTile)
-            {
-                Debug.Log("Found door tile at - " + vec3i);
+                Vector3Int validCell = cellToCheck;
+                Debug.Log("Found valid cell at: " + validCell + " for door at " + randDoor);
+
+                // todo: change m_Startroom to randomly selected one from list later
+                Tilemap newRoom = m_startRoom;
+
+                List<Vector3Int> doorsInNewRoom = GetDoorTiles(newRoom, m_doorTile);
+
+                foreach (var doorInNewRoom in doorsInNewRoom)
+                {
+                    Vector3Int offset = validCell - doorInNewRoom;
+                    bool hasOverlap = CheckOverlap(m_dungeonMap, newRoom, offset);
+                    if (!hasOverlap)
+                    {
+                        CopyTilemap(newRoom, m_dungeonMap, offset);
+                        break;
+                    }
+                }
+                break;
             }
         }
 
-        Debug.Log("tilecount: " + count);
 
-        m_dungeonMap.SetTile(new Vector3Int(-3, -3), m_floorTile);
+        //Debug.Log("tilecount: " + count);
+
+        //m_dungeonMap.SetTile(new Vector3Int(1, -1), m_floorTile);
 
 
         //string output = "";
@@ -66,8 +94,60 @@ public class LevelGenerator : MonoBehaviour
         //Debug.Log(tilemap.cellBounds.allPositionsWithin.ToString());
     }
 
+    [Button]
     private void AddStartRoom()
     {
-        //m_floorMap.SetTiles(m_startRoom.)
+        CopyTilemap(m_startRoom, m_dungeonMap, Vector3Int.zero);
+    }
+
+    private List<Vector3Int> GetDoorTiles(Tilemap tilemap, Tile doorTile)
+    {
+        int count = 0;
+        var tilesInBounds = tilemap.cellBounds.allPositionsWithin;
+        List<Vector3Int> doorTiles = new List<Vector3Int>();
+
+        foreach (var vec3i in tilesInBounds)
+        {
+            TileBase tile = tilemap.GetTile<TileBase>(vec3i);
+            if (tile != null)
+            {
+                count++;
+            }
+            if (tile == doorTile)
+            {
+                //Debug.Log("Found door tile at - " + vec3i);
+                doorTiles.Add(vec3i);
+            }
+        }
+
+
+        return doorTiles;
+    }
+
+    private bool CheckOverlap(Tilemap tm1, Tilemap tm2, Vector3Int offset)
+    {
+        var tm1Tiles = tm1.cellBounds.allPositionsWithin;
+        foreach (var vec3i in tm1Tiles)
+        {
+            Vector3Int checkCell = vec3i + offset;
+            if (tm2.GetTile(checkCell) != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void CopyTilemap(Tilemap from, Tilemap to, Vector3Int tileOffset)
+    {
+        var tilesInBounds = from.cellBounds.allPositionsWithin;
+        List<Vector3Int> doorTiles = new List<Vector3Int>();
+        foreach (var vec3i in tilesInBounds)
+        {
+            TileBase tile = from.GetTile<TileBase>(vec3i);
+            Vector3Int newTilePos = vec3i + tileOffset;
+            to.SetTile(newTilePos, tile);
+        }
     }
 }
