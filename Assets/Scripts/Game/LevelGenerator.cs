@@ -28,6 +28,20 @@ public class LevelGenerator : MonoBehaviour
         m_dungeonMap.ClearAllTiles();
         AddStartRoom();
 
+        /// #### ALGORITHM ### ///
+        /// 
+        // check start room for available doors
+        // add to list
+        // choose one at random
+        // choose a room at random
+        // check chosen room for available doors
+        // add to list
+        // check which doors can fit with the start room door without overlapping
+        // additional: add bounds for the map
+        ///
+        /// #### ALGORITHM ### ///
+
+
         Tilemap lastRoom = m_dungeonMap;
         for (m_roomsCount = 0; m_roomsCount < m_roomsToGenerate;)
         {
