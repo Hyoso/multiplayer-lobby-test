@@ -26,4 +26,10 @@ public static class ListExtensions
         list.Remove(copy);
         return copy;
     }
+
+    public static T GetRandom<T>(this List<T> list)
+    {
+        T copy = list[UnityEngine.Random.Range(0, list.Count)];
+        return copy;
+    }
 }
