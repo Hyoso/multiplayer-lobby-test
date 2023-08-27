@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
   m_Name: Rule_Tile_Dungeon_Background
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: 657411788, guid: 1eac61c1733f3384ca593f49b87ecf5f, type: 3}
+  m_DefaultSprite: {fileID: 522653472, guid: 1eac61c1733f3384ca593f49b87ecf5f, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 1
   m_TilingRules:

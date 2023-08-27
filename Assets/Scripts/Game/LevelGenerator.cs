@@ -12,25 +12,27 @@ public class LevelGenerator : MonoBehaviour
     private const int MAX_ATTEMPTS = 99;
 
     [SerializeField] private int m_roomsToGenerate = 5;
+    [SerializeField] private Tile m_floorTile;
+    [SerializeField] private Tile m_roomLinkTile;
+    [SerializeField] private Tilemap m_dungeonMap;
+    [SerializeField] private Tilemap m_startRoom;
 
-    public Tilemap m_dungeonMap;
-    public Tilemap m_startRoom;
-    public List<Tilemap> m_rooms = new List<Tilemap>();
-    public Tile m_doorTile;
-    public Tile m_floorTile;
+    [SerializeField] private List<Tilemap> m_rooms = new List<Tilemap>();
 
     private int m_roomsCount;
     private int m_attemptsCounter;
+    private List<Vector3Int> m_roomLinks = new List<Vector3Int>();
 
     [Button]
     public void Generate()
     {
+        m_roomLinks.Clear();
         m_dungeonMap.ClearAllTiles();
         AddStartRoom();
 
         /// #### ALGORITHM ### ///
         /// 
-        // check start room for available doors
+        // check start room for available doors (room links)
         // add to list
         // choose one at random
         // choose a room at random
@@ -47,6 +49,8 @@ public class LevelGenerator : MonoBehaviour
         {
             AddRoomToDungeon();
         }
+
+        ReplaceRoomLinkTiles();
     }
 
     [Button]
@@ -59,7 +63,7 @@ public class LevelGenerator : MonoBehaviour
             Vector3Int.left
         };
 
-        List<Vector3Int> doorTiles = GetDoorTiles(m_dungeonMap, m_doorTile);
+        List<Vector3Int> roomLinkTiles = GetRoomLinkTiles(m_dungeonMap, m_roomLinkTile);
 
         List<Tilemap> tilemapsCopy = new List<Tilemap>(m_rooms);
 
@@ -67,10 +71,10 @@ public class LevelGenerator : MonoBehaviour
         {
             Tilemap newRoom = tilemapsCopy.GetRandomElementAndRemove();
 
-            while (doorTiles.Count > 0)
+            while (roomLinkTiles.Count > 0)
             {
                 // random door from room 1
-                Vector3Int randDoor = doorTiles.GetRandomElementAndRemove();
+                Vector3Int randDoor = roomLinkTiles.GetRandomElementAndRemove();
 
                 // check all 4 directions for a space
                 foreach (var dir in checkDirections)
@@ -81,9 +85,7 @@ public class LevelGenerator : MonoBehaviour
                     {
                         Vector3Int validCell = cellToCheck;
 
-                        // todo: change m_Startroom to randomly selected one from list later
-
-                        List<Vector3Int> doorsInNewRoom = GetDoorTiles(newRoom, m_doorTile);
+                        List<Vector3Int> doorsInNewRoom = GetRoomLinkTiles(newRoom, m_roomLinkTile);
 
                         foreach (var doorInNewRoom in doorsInNewRoom)
                         {
@@ -92,6 +94,7 @@ public class LevelGenerator : MonoBehaviour
                             if (!hasOverlap)
                             {
                                 CopyTilemap(newRoom, m_dungeonMap, offset);
+                                m_roomLinks.Add(randDoor);
                                 m_roomsCount++;
                                 m_attemptsCounter = 0;
                                 return;
@@ -108,7 +111,13 @@ public class LevelGenerator : MonoBehaviour
         {
             m_roomsCount = m_roomsToGenerate;
         }
+
         Debug.Log("No more valid positions found");
+    }
+
+    private void ValidateSettings()
+    {
+        // check variables are set
     }
 
     [Button]
@@ -117,11 +126,11 @@ public class LevelGenerator : MonoBehaviour
         CopyTilemap(m_startRoom, m_dungeonMap, Vector3Int.zero);
     }
 
-    private List<Vector3Int> GetDoorTiles(Tilemap tilemap, Tile doorTile)
+    private List<Vector3Int> GetRoomLinkTiles(Tilemap tilemap, Tile roomLinkTile)
     {
         int count = 0;
         var tilesInBounds = tilemap.cellBounds.allPositionsWithin;
-        List<Vector3Int> doorTiles = new List<Vector3Int>();
+        List<Vector3Int> roomLinkTiles = new List<Vector3Int>();
 
         foreach (var vec3i in tilesInBounds)
         {
@@ -130,14 +139,14 @@ public class LevelGenerator : MonoBehaviour
             {
                 count++;
             }
-            if (tile == doorTile)
+            if (tile == roomLinkTile)
             {
-                doorTiles.Add(vec3i);
+                roomLinkTiles.Add(vec3i);
             }
         }
 
 
-        return doorTiles;
+        return roomLinkTiles;
     }
 
     [Button]
@@ -176,16 +185,27 @@ public class LevelGenerator : MonoBehaviour
         return false;
     }
 
+    private void ReplaceRoomLinkTiles()
+    {
+        foreach (var cell in m_roomLinks)
+        {
+            m_dungeonMap.SetTile(cell, m_floorTile);
+        }
+    }
+
     private void CopyTilemap(Tilemap from, Tilemap to, Vector3Int tileOffset)
     {
         var tilesInBounds = from.cellBounds.allPositionsWithin;
-        List<Vector3Int> doorTiles = new List<Vector3Int>();
         foreach (var vec3i in tilesInBounds)
         {
             TileBase tile = from.GetTile<TileBase>(vec3i);
             if (tile)
             {
                 Vector3Int newTilePos = vec3i + tileOffset;
+                if (tile == m_roomLinkTile)
+                {
+                    m_roomLinks.Add(newTilePos);
+                }
                 to.SetTile(newTilePos, tile);
             }
         }
