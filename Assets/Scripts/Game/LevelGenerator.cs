@@ -50,7 +50,8 @@ public class LevelGenerator : MonoBehaviour
             AddRoomToDungeon();
         }
 
-        ReplaceRoomLinkTiles();
+        //RemoveUnusedHallways();
+        //ReplaceRoomLinkTiles();
     }
 
     [Button]
@@ -190,6 +191,63 @@ public class LevelGenerator : MonoBehaviour
         foreach (var cell in m_roomLinks)
         {
             m_dungeonMap.SetTile(cell, m_floorTile);
+        }
+    }
+
+    [Button]
+    private void RemoveUnusedHallways()
+    {
+        // loop through room links list
+        // find if north/east/south/west tile is empty
+        // if empty then back track in opposite direction
+        // remove current tile and cur tile + 1, also remove adjacent tiles
+        // for cur tile + 2, replace with wall tile
+
+        List<Vector3Int> checkDirections = new List<Vector3Int>{
+            Vector3Int.up,
+            Vector3Int.right,
+            Vector3Int.down,
+            Vector3Int.left
+        };
+
+
+        for (int i = 0; i < m_roomLinks.Count; i++)
+        {
+            Vector3Int cell = m_roomLinks[i];
+            for (int c = 0; c < checkDirections.Count; c++)
+            {
+                Vector3Int dir = checkDirections[c];
+                Vector3Int checkCell = cell + dir;
+                if (m_dungeonMap.GetTile(checkCell) == null)
+                {
+                    // check adjacent tiles
+                    Vector3Int adjacentDir1 = checkDirections[(c + 1) % checkDirections.Count];
+                    Vector3Int adjacentDir2 = checkDirections[(c + 3) % checkDirections.Count];
+
+                    Vector3Int adjCell1 = cell + adjacentDir1;
+                    Vector3Int adjCell2 = cell + adjacentDir2;
+
+                    // tile is empty so remove cell and cell + 1
+                    m_dungeonMap.SetTile(cell, null);
+                    m_dungeonMap.SetTile(adjCell1, null);
+                    m_dungeonMap.SetTile(adjCell2, null);
+
+                    int layersToRemove = 2;
+                    for (int j = 0; j < layersToRemove; j++)
+                    {
+                        // remove next layers
+                        cell += dir * -1;
+                        adjCell1 = cell + adjacentDir1;
+                        adjCell2 = cell + adjacentDir2;
+
+                        m_dungeonMap.SetTile(cell, null);
+                        m_dungeonMap.SetTile(adjCell1, null);
+                        m_dungeonMap.SetTile(adjCell2, null);
+                    }
+
+                    break;
+                }
+            }
         }
     }
 
