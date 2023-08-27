@@ -9,6 +9,13 @@ using UnityEngine.Tilemaps;
 [ExecuteInEditMode]
 public class LevelGenerator : MonoBehaviour
 {
+    [System.Serializable]
+    public struct HallwayReplacementTiles
+    {
+        public Vector3Int direction;
+        public List<Tile> replacementTiles; // each element = each layer of tiles
+    }
+
     private const int MAX_ATTEMPTS = 99;
 
     [SerializeField] private int m_roomsToGenerate = 5;
@@ -18,6 +25,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private Tilemap m_startRoom;
 
     [SerializeField] private List<Tilemap> m_rooms = new List<Tilemap>();
+    [SerializeField] private List<HallwayReplacementTiles> m_hallwayReplacementTiles = new List<HallwayReplacementTiles>();
 
     private int m_roomsCount;
     private int m_attemptsCounter;
@@ -50,8 +58,8 @@ public class LevelGenerator : MonoBehaviour
             AddRoomToDungeon();
         }
 
-        //RemoveUnusedHallways();
-        //ReplaceRoomLinkTiles();
+        RemoveUnusedHallways();
+        ReplaceRoomLinkTiles();
     }
 
     [Button]
@@ -121,7 +129,6 @@ public class LevelGenerator : MonoBehaviour
         // check variables are set
     }
 
-    [Button]
     private void AddStartRoom()
     {
         CopyTilemap(m_startRoom, m_dungeonMap, Vector3Int.zero);
@@ -150,7 +157,6 @@ public class LevelGenerator : MonoBehaviour
         return roomLinkTiles;
     }
 
-    [Button]
     public void PrintDungeonMapTileCount()
     {
         var tm1Tiles = m_dungeonMap.cellBounds.allPositionsWithin;
@@ -190,47 +196,47 @@ public class LevelGenerator : MonoBehaviour
     {
         foreach (var cell in m_roomLinks)
         {
-            m_dungeonMap.SetTile(cell, m_floorTile);
+            if (m_dungeonMap.GetTile(cell) == m_roomLinkTile)
+            {
+                m_dungeonMap.SetTile(cell, m_floorTile);
+            }
         }
     }
 
-    [Button]
     private void RemoveUnusedHallways()
     {
+        /// #### ALGORITHM ### ///
+        /// 
         // loop through room links list
         // find if north/east/south/west tile is empty
         // if empty then back track in opposite direction
         // remove current tile and cur tile + 1, also remove adjacent tiles
         // for cur tile + 2, replace with wall tile
-
-        List<Vector3Int> checkDirections = new List<Vector3Int>{
-            Vector3Int.up,
-            Vector3Int.right,
-            Vector3Int.down,
-            Vector3Int.left
-        };
-
+        /// 
+        /// #### ALGORITHM ### ///
+        /// 
+        List<Vector3Int> removedRoomLinks = new List<Vector3Int>();
 
         for (int i = 0; i < m_roomLinks.Count; i++)
         {
             Vector3Int cell = m_roomLinks[i];
-            for (int c = 0; c < checkDirections.Count; c++)
+            for (int c = 0; c < m_hallwayReplacementTiles.Count; c++)
             {
-                Vector3Int dir = checkDirections[c];
+                Vector3Int dir = m_hallwayReplacementTiles[c].direction;
                 Vector3Int checkCell = cell + dir;
                 if (m_dungeonMap.GetTile(checkCell) == null)
                 {
                     // check adjacent tiles
-                    Vector3Int adjacentDir1 = checkDirections[(c + 1) % checkDirections.Count];
-                    Vector3Int adjacentDir2 = checkDirections[(c + 3) % checkDirections.Count];
+                    Vector3Int adjacentDir1 = m_hallwayReplacementTiles[(c + 1) % m_hallwayReplacementTiles.Count].direction;
+                    Vector3Int adjacentDir2 = m_hallwayReplacementTiles[(c + 3) % m_hallwayReplacementTiles.Count].direction;
 
                     Vector3Int adjCell1 = cell + adjacentDir1;
                     Vector3Int adjCell2 = cell + adjacentDir2;
 
                     // tile is empty so remove cell and cell + 1
-                    m_dungeonMap.SetTile(cell, null);
-                    m_dungeonMap.SetTile(adjCell1, null);
-                    m_dungeonMap.SetTile(adjCell2, null);
+                    m_dungeonMap.SetTile(cell, m_hallwayReplacementTiles[c].replacementTiles[0]);
+                    m_dungeonMap.SetTile(adjCell1, m_hallwayReplacementTiles[c].replacementTiles[0]);
+                    m_dungeonMap.SetTile(adjCell2, m_hallwayReplacementTiles[c].replacementTiles[0]);
 
                     int layersToRemove = 2;
                     for (int j = 0; j < layersToRemove; j++)
@@ -240,14 +246,20 @@ public class LevelGenerator : MonoBehaviour
                         adjCell1 = cell + adjacentDir1;
                         adjCell2 = cell + adjacentDir2;
 
-                        m_dungeonMap.SetTile(cell, null);
-                        m_dungeonMap.SetTile(adjCell1, null);
-                        m_dungeonMap.SetTile(adjCell2, null);
+                        m_dungeonMap.SetTile(cell, m_hallwayReplacementTiles[c].replacementTiles[j + 1]);
+                        m_dungeonMap.SetTile(adjCell1, m_hallwayReplacementTiles[c].replacementTiles[j + 1]);
+                        m_dungeonMap.SetTile(adjCell2, m_hallwayReplacementTiles[c].replacementTiles[j + 1]);
                     }
 
+                    removedRoomLinks.Add(cell);
                     break;
                 }
             }
+        }
+
+        foreach (var cell in removedRoomLinks)
+        {
+            m_roomLinks.Remove(cell);
         }
     }
 
