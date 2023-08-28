@@ -1,7 +1,5 @@
 using NaughtyAttributes;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
@@ -9,6 +7,15 @@ using UnityEngine.Tilemaps;
 [ExecuteInEditMode]
 public class LevelGenerator : MonoBehaviour
 {
+    public enum RoomTypes
+    {
+        START_ROOM,
+        MONSTERS,
+        TREASURE,
+        BUFF,
+        BOSS
+    }
+
     [System.Serializable]
     public struct HallwayReplacementTiles
     {
@@ -16,16 +23,33 @@ public class LevelGenerator : MonoBehaviour
         public List<Tile> replacementTiles; // each element = each layer of tiles
     }
 
+    [System.Serializable]
+    public struct Room
+    {
+        public Bounds bounds;
+        public RoomTypes roomType; // todo: change this to enum later
+    }
+
+    [System.Serializable]
+    public struct RoomTilemaps
+    {
+        public Tilemap tilemap;
+        public RoomTypes roomType;
+    }
+
     private const int MAX_ATTEMPTS = 99;
 
     [SerializeField] private int m_roomsToGenerate = 5;
+    [SerializeField] private Bounds m_mapBounds;
+    [Space(5)]
     [SerializeField] private Tile m_floorTile;
     [SerializeField] private Tile m_roomLinkTile;
     [SerializeField] private Tilemap m_dungeonMap;
     [SerializeField] private Tilemap m_startRoom;
 
-    [SerializeField] private List<Tilemap> m_rooms = new List<Tilemap>();
+    [SerializeField] private List<RoomTilemaps> m_roomTilemaps = new List<RoomTilemaps>();
     [SerializeField] private List<HallwayReplacementTiles> m_hallwayReplacementTiles = new List<HallwayReplacementTiles>();
+    [SerializeField, ReadOnly] private List<Room> m_generatedRooms = new List<Room>();
 
     private int m_roomsCount;
     private int m_attemptsCounter;
@@ -36,7 +60,13 @@ public class LevelGenerator : MonoBehaviour
     {
         m_roomLinks.Clear();
         m_dungeonMap.ClearAllTiles();
+        m_generatedRooms.Clear();
         AddStartRoom();
+        m_generatedRooms.Add(new Room() 
+        { 
+            bounds = new Bounds(m_startRoom.cellBounds.position, m_startRoom.cellBounds.size),
+            roomType = RoomTypes.START_ROOM
+        });
 
         /// #### ALGORITHM ### ///
         /// 
@@ -51,7 +81,6 @@ public class LevelGenerator : MonoBehaviour
         ///
         /// #### ALGORITHM ### ///
 
-
         Tilemap lastRoom = m_dungeonMap;
         for (m_roomsCount = 0; m_roomsCount < m_roomsToGenerate;)
         {
@@ -60,6 +89,16 @@ public class LevelGenerator : MonoBehaviour
 
         RemoveUnusedHallways();
         ReplaceRoomLinkTiles();
+    }
+
+    private void OnDrawGizmos()
+    {
+        GizmosUtils.DrawBoundingBox(m_mapBounds, Color.red);
+
+        foreach (var room in m_generatedRooms)
+        {
+            GizmosUtils.DrawBoundingBox(room.bounds, Color.red);
+        }
     }
 
     [Button]
@@ -74,11 +113,12 @@ public class LevelGenerator : MonoBehaviour
 
         List<Vector3Int> roomLinkTiles = GetRoomLinkTiles(m_dungeonMap, m_roomLinkTile);
 
-        List<Tilemap> tilemapsCopy = new List<Tilemap>(m_rooms);
+        List<RoomTilemaps> tilemapsCopy = new List<RoomTilemaps>(m_roomTilemaps);
 
         while (tilemapsCopy.Count > 0)
         {
-            Tilemap newRoom = tilemapsCopy.GetRandomElementAndRemove();
+            RoomTilemaps newRoomTilemap = tilemapsCopy.GetRandomElementAndRemove();
+            Tilemap newRoom = newRoomTilemap.tilemap;
 
             while (roomLinkTiles.Count > 0)
             {
@@ -100,10 +140,20 @@ public class LevelGenerator : MonoBehaviour
                         {
                             Vector3Int offset = validCell - doorInNewRoom;
                             bool hasOverlap = CheckOverlap(m_dungeonMap, newRoom, offset);
-                            if (!hasOverlap)
+                            bool withinBounds = CheckWithinBounds(newRoom, offset);
+                            if (!hasOverlap && withinBounds)
                             {
                                 CopyTilemap(newRoom, m_dungeonMap, offset);
+
+                                //Vector3 size = newRoom.cellBounds.size;
+                                //size *= 0.5f;
+                                //m_generatedRooms.Add(new Room()
+                                //{
+                                //    bounds = new Bounds(offset, size),
+                                //    roomType = newRoomTilemap.roomType
+                                //});
                                 m_roomLinks.Add(randDoor);
+
                                 m_roomsCount++;
                                 m_attemptsCounter = 0;
                                 return;
@@ -121,7 +171,7 @@ public class LevelGenerator : MonoBehaviour
             m_roomsCount = m_roomsToGenerate;
         }
 
-        Debug.Log("No more valid positions found");
+        //Debug.Log("No more valid positions found");
     }
 
     private void ValidateSettings()
@@ -168,6 +218,24 @@ public class LevelGenerator : MonoBehaviour
                 count++;
             }
         }
+    }
+
+    private bool CheckWithinBounds(Tilemap tm1, Vector3Int offset)
+    {
+        var tilesInBounds = tm1.cellBounds.allPositionsWithin;
+        foreach (var vec3i in tilesInBounds)
+        {
+            TileBase tile = tm1.GetTile(vec3i);
+            if (tile)
+            {
+                Vector3Int newTilePos = vec3i + offset;
+                if (!m_mapBounds.Contains(newTilePos))
+                {
+        return false;
+                }
+            }
+        }
+                    return true;
     }
 
     private bool CheckOverlap(Tilemap tm1, Tilemap tm2, Vector3Int offset)
