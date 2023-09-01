@@ -1,5 +1,6 @@
 using NaughtyAttributes;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -27,7 +28,7 @@ public class LevelGenerator : MonoBehaviour
     [System.Serializable]
     public struct Room
     {
-        //public Bounds bounds;
+        public Bounds bounds;
         public RoomTypes roomType; // todo: change this to enum later
         public List<DoorTile> doorTiles;
         public List<RoomEntranceTile> entranceTiles;
@@ -42,9 +43,11 @@ public class LevelGenerator : MonoBehaviour
 
     private const int MAX_ATTEMPTS = 99;
 
+    [SerializeField] private GameObject m_tilemapColliderPrefab;
     [SerializeField] private GameObject m_doorPrefab;
     [SerializeField] private GameObject m_roomEntrancePrefab;
     [SerializeField] private Transform m_doorsParent;
+    [SerializeField] private Transform m_collidersParent;
 
     [SerializeField] private int m_roomsToGenerate = 5;
     [SerializeField] private Bounds m_mapBounds;
@@ -72,19 +75,20 @@ public class LevelGenerator : MonoBehaviour
         m_generatedRooms.Clear();
 #if UNITY_EDITOR
         m_doorsParent.DestroyImmediateAllChildren();
+        m_collidersParent.DestroyImmediateAllChildren();
 #else
         m_doorsParent.DestroyAllChildren();
+        m_collidersParent.DestroyAllChildren();
 #endif
         AddStartRoom();
-        //Vector3 size = m_startRoom.cellBounds.size;
+        Vector3 size = m_startRoom.cellBounds.size;
         //size.x -= 4.0f;
         //size.y -= 4.0f;
-        //m_generatedRooms.Add(new Room() 
-        //{ 
+        //m_generatedRooms.Add(new Room()
+        //{
         //    bounds = new Bounds(m_startRoom.cellBounds.center, size),
         //    roomType = RoomTypes.START_ROOM
         //});
-
         /// #### ALGORITHM ### ///
         /// 
         // check start room for available doors (room links)
@@ -97,6 +101,8 @@ public class LevelGenerator : MonoBehaviour
         // additional: add bounds for the map
         ///
         /// #### ALGORITHM ### ///
+        /// 
+        CreateRoomCollider(m_startRoom, Vector3Int.zero);
 
         for (m_roomsCount = 0; m_roomsCount < m_roomsToGenerate;)
         {
@@ -105,16 +111,20 @@ public class LevelGenerator : MonoBehaviour
 
         RemoveUnusedHallways();
         ReplaceRoomLinkTiles();
+
+        List<Vector3Int> doorsInNewRoom = GetTileOfType(m_dungeonMap, m_doorTile);
+        AddRoomDoors(doorsInNewRoom, Vector3.zero);
     }
 
+    
     private void OnDrawGizmos()
     {
         GizmosUtils.DrawBoundingBox(m_mapBounds, Color.red);
 
-        //foreach (var room in m_generatedRooms)
-        //{
-        //    GizmosUtils.DrawBoundingBox(room.bounds, Color.red);
-        //}
+        foreach (var room in m_generatedRooms)
+        {
+            GizmosUtils.DrawBoundingBox(room.bounds, Color.red);
+        }
     }
 
     [Button]
@@ -161,7 +171,8 @@ public class LevelGenerator : MonoBehaviour
                             {
                                 CopyTilemap(newRoom, m_dungeonMap, offset);
                                 //AddRoomDoors(doorsInNewRoom, offset);
-                                
+                                CreateRoomCollider(newRoom, offset);
+
                                 m_roomLinks.Add(randDoor);
 
                                 m_roomsCount++;
@@ -192,8 +203,8 @@ public class LevelGenerator : MonoBehaviour
     private void AddStartRoom()
     {
         CopyTilemap(m_startRoom, m_dungeonMap, Vector3Int.zero);
-        List<Vector3Int> doorsInNewRoom = GetTileOfType(m_dungeonMap, m_doorTile);
-        AddRoomDoors(doorsInNewRoom, Vector3.zero);
+        //List<Vector3Int> doorsInNewRoom = GetTileOfType(m_dungeonMap, m_doorTile);
+        //AddRoomDoors(doorsInNewRoom, Vector3.zero);
     }
 
     private List<Vector3Int> GetTileOfType(Tilemap tilemap, Tile roomLinkTile)
@@ -295,6 +306,14 @@ public class LevelGenerator : MonoBehaviour
         return false;
     }
 
+    private void ReplaceTiles(Tilemap tm, List<Vector3Int> cellsToReplace, Tile tile)
+    {
+        foreach (var cell in cellsToReplace)
+        {
+            tm.SetTile(cell, tile);
+        }
+    }
+
     private void ReplaceRoomLinkTiles()
     {
         foreach (var cell in m_roomLinks)
@@ -336,6 +355,8 @@ public class LevelGenerator : MonoBehaviour
         });
 
         doors.Clear();
+
+        ReplaceTiles(m_dungeonMap, doorCells, m_floorTile);
     }
 
     private void RemoveUnusedHallways()
@@ -398,7 +419,56 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void CopyTilemap(Tilemap from, Tilemap to, Vector3Int tileOffset)
+    private void CreateRoomCollider(Tilemap roomTM, Vector3Int roomOffset)
+    {
+        GameObject tilemapGameObject = Instantiate(m_tilemapColliderPrefab);
+        tilemapGameObject.transform.parent = m_collidersParent;
+        Tilemap colliderTilemap = tilemapGameObject.GetComponent<Tilemap>();
+        CopyTilemap(roomTM, colliderTilemap, roomOffset, false);
+
+        List<Vector3Int> doorLinkCells = GetRoomLinkTiles(colliderTilemap, m_roomLinkTile);
+
+        for (int i = 0; i < doorLinkCells.Count; i++)
+        {
+            Vector3Int cell = doorLinkCells[i];
+            for (int c = 0; c < m_hallwayReplacementTiles.Count; c++)
+            {
+                Vector3Int dir = m_hallwayReplacementTiles[c].direction;
+                Vector3Int checkCell = cell + dir;
+                if (colliderTilemap.GetTile(checkCell) == null)
+                {
+                    // check adjacent tiles
+                    Vector3Int adjacentDir1 = m_hallwayReplacementTiles[(c + 1) % m_hallwayReplacementTiles.Count].direction;
+                    Vector3Int adjacentDir2 = m_hallwayReplacementTiles[(c + 3) % m_hallwayReplacementTiles.Count].direction;
+
+                    Vector3Int adjCell1 = cell + adjacentDir1;
+                    Vector3Int adjCell2 = cell + adjacentDir2;
+
+                    // tile is empty so remove cell and cell + 1
+                    colliderTilemap.SetTile(cell, m_hallwayReplacementTiles[c].replacementTiles[0]);
+                    colliderTilemap.SetTile(adjCell1, m_hallwayReplacementTiles[c].replacementTiles[0]);
+                    colliderTilemap.SetTile(adjCell2, m_hallwayReplacementTiles[c].replacementTiles[0]);
+
+                    int layersToRemove = 2;
+                    for (int j = 0; j < layersToRemove; j++)
+                    {
+                        // remove next layers
+                        cell += dir * -1;
+                        adjCell1 = cell + adjacentDir1;
+                        adjCell2 = cell + adjacentDir2;
+
+                        colliderTilemap.SetTile(cell, m_hallwayReplacementTiles[c].replacementTiles[j + 1]);
+                        colliderTilemap.SetTile(adjCell1, m_hallwayReplacementTiles[c].replacementTiles[j + 1]);
+                        colliderTilemap.SetTile(adjCell2, m_hallwayReplacementTiles[c].replacementTiles[j + 1]);
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    private void CopyTilemap(Tilemap from, Tilemap to, Vector3Int tileOffset, bool addToRoomLinks = true)
     {
         var tilesInBounds = from.cellBounds.allPositionsWithin;
         foreach (var vec3i in tilesInBounds)
@@ -407,7 +477,7 @@ public class LevelGenerator : MonoBehaviour
             if (tile)
             {
                 Vector3Int newTilePos = vec3i + tileOffset;
-                if (tile == m_roomLinkTile)
+                if (tile == m_roomLinkTile && addToRoomLinks)
                 {
                     m_roomLinks.Add(newTilePos);
                 }
