@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
+using static LevelGenerator;
 
 [ExecuteInEditMode]
 public class LevelGenerator : MonoBehaviour
@@ -28,11 +29,12 @@ public class LevelGenerator : MonoBehaviour
     [System.Serializable]
     public class Room
     {
+        public int roomId = -1;
         public Bounds bounds;
         public GameObject colliderGameObject;
         public RoomTypes roomType; // todo: change this to enum later
         public List<DoorTile> doorTiles = new List<DoorTile>();
-        public List<RoomEntranceTile> entranceTiles = new List<RoomEntranceTile>();
+        //public List<RoomEntranceTile> entranceTiles = new List<RoomEntranceTile>();
     }
 
     [System.Serializable]
@@ -65,6 +67,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private List<HallwayReplacementTiles> m_hallwayReplacementTiles = new List<HallwayReplacementTiles>();
     [SerializeField, ReadOnly] private List<Room> m_generatedRooms = new List<Room>();
     private List<Tilemap> m_colliderTilemaps = new List<Tilemap>();
+    private List<Vector3Int> m_roomEntranceCells = new List<Vector3Int>();
 
 
     private int m_roomsCount;
@@ -78,6 +81,7 @@ public class LevelGenerator : MonoBehaviour
         m_dungeonMap.ClearAllTiles();
         m_generatedRooms.Clear();
         m_colliderTilemaps.Clear();
+        m_roomEntranceCells.Clear();
 #if UNITY_EDITOR
         m_doorsParent.DestroyImmediateAllChildren();
         m_collidersParent.DestroyImmediateAllChildren();
@@ -111,9 +115,9 @@ public class LevelGenerator : MonoBehaviour
         ReplaceRoomLinkTiles();
         CalculateRoomBounds();
         SetupRoomEntranceTiles();
-
-        List<Vector3Int> doorsInNewRoom = GetTileOfType(m_dungeonMap, m_doorTile);
-        AddRoomDoors(doorsInNewRoom, Vector3.zero);
+        AddRoomDoors();
+        // replace room entrance tiles
+        ReplaceTiles(m_dungeonMap, m_roomEntranceCells, m_floorTile);
     }
 
     
@@ -173,7 +177,9 @@ public class LevelGenerator : MonoBehaviour
                                 GameObject colliderGO = CreateRoomCollider(newRoom, offset);
                                 m_generatedRooms.Add(new Room()
                                 {
-                                    colliderGameObject = colliderGO
+                                    roomId = m_generatedRooms.Count,
+                                    colliderGameObject = colliderGO,
+                                    roomType = newRoomTilemap.roomType
                                 });
                                 m_roomLinks.Add(randDoor);
 
@@ -206,7 +212,9 @@ public class LevelGenerator : MonoBehaviour
         GameObject colliderGO = CreateRoomCollider(m_startRoom, Vector3Int.zero);
         m_generatedRooms.Add(new Room()
         {
-            colliderGameObject = colliderGO
+            roomId = m_generatedRooms.Count,
+            colliderGameObject = colliderGO,
+            roomType = RoomTypes.START_ROOM
         });
     }
 
@@ -280,11 +288,11 @@ public class LevelGenerator : MonoBehaviour
                 Vector3Int newTilePos = vec3i + offset;
                 if (!m_mapBounds.Contains(newTilePos))
                 {
-        return false;
+                    return false;
                 }
             }
         }
-                    return true;
+        return true;
     }
 
     private bool CheckOverlap(Tilemap tm1, Tilemap tm2, Vector3Int offset)
@@ -328,17 +336,40 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void AddRoomDoors(List<Vector3Int> doorCells, Vector3 offset)
+    private void AddRoomDoors()
     {
+        List<Vector3Int> checkDirections = new List<Vector3Int>{
+            Vector3Int.up,
+            Vector3Int.right,
+            Vector3Int.down,
+            Vector3Int.left
+        };
+
+        List<Vector3Int> doorCells = GetTileOfType(m_dungeonMap, m_doorTile);
+
         Dictionary<Vector3Int, DoorTile> doorsDict = new Dictionary<Vector3Int, DoorTile>();
 
         foreach (var cell in doorCells)
         {
             DoorTile door = GameObject.Instantiate(m_doorPrefab).GetComponent<DoorTile>();
-            Vector3 cellWorldPos = cell + offset;
+            Vector3 cellWorldPos = cell;
             door.transform.position = cellWorldPos;
             door.transform.parent = m_doorsParent;
             doorsDict.Add(cell, door);
+
+            for (int i = 0; i < checkDirections.Count; i++)
+            {
+                Vector3Int checkCell = checkDirections[i] + cell;
+                if (m_dungeonMap.GetTile(checkCell) == m_roomEntranceTile)
+                {
+                    // there's a room entrance tile in this direction
+                    // so the direction of this door is in the opposite direction
+                    // e.g. the room entrance is south of this tile, so this is a north facing door
+
+                    int convertedDirection = (i + 2) % checkDirections.Count;
+                    door.direction = (DoorTile.Direction)convertedDirection;
+                }
+            }
         }
 
         foreach (var cell in doorCells)
@@ -507,8 +538,8 @@ public class LevelGenerator : MonoBehaviour
                         go.transform.parent = m_roomEntranceTilesParent;
                     }
                 }
-                
-                m_dungeonMap.SetTile(cell, m_floorTile);
+
+                m_roomEntranceCells.Add(cell);
             }
         }
     }
