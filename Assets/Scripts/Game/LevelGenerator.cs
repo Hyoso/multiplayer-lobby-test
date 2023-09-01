@@ -366,7 +366,7 @@ public class LevelGenerator : MonoBehaviour
                     // so the direction of this door is in the opposite direction
                     // e.g. the room entrance is south of this tile, so this is a north facing door
 
-                    int convertedDirection = (i + 2) % checkDirections.Count;
+                    int convertedDirection = ((i + 2) % checkDirections.Count) + 1;
                     door.direction = (DoorTile.Direction)convertedDirection;
                 }
             }

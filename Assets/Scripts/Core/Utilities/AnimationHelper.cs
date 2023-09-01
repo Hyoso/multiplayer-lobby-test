@@ -181,7 +181,7 @@ public class AnimationHelper : MonoBehaviour
 		}
 	}
 
-	private void PlayAnimationI(string animationName, Action onFinishedCallback = null, float startTime = 0f, bool checkIsPlayingFirst = false, float crossfade = 0f, int layer = 0)
+	public void PlayAnimation(string animationName, Action onFinishedCallback = null, float startTime = 0f, bool checkIsPlayingFirst = false, float crossfade = 0f, int layer = 0)
 	{
 		if (m_animator.enabled)
 		{
