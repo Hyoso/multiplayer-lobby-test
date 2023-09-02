@@ -40,6 +40,7 @@ public class DoorTile : MonoBehaviour
         OpenDoor();
     }
 
+
     public void OpenDoor()
     {
         if (direction == Direction.NORTH)
