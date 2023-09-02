@@ -31,32 +31,10 @@ public class LevelGenerator : MonoBehaviour
 
     private const int MAX_ATTEMPTS = 99;
 
-    //[SerializeField] private GameObject m_tilemapColliderPrefab;
-    //[SerializeField] private GameObject m_doorPrefab;
-    //[SerializeField] private GameObject m_roomEntrancePrefab;
-    //[SerializeField] private Transform m_doorsParent;
-    //[SerializeField] private Transform m_collidersParent;
-    //[SerializeField] private Transform m_roomEntranceTilesParent;
-
     [SerializeField] private int m_roomsToGenerate = 5;
     [SerializeField] private Bounds m_mapBounds;
-    //[Space(5)]
-    //[SerializeField] private Tile m_floorTile;
-    //[SerializeField] private Tile m_roomLinkTile;
-    //[SerializeField] private Tile m_doorTile;
-    //[SerializeField] private Tile m_roomEntranceTile;
-
     [SerializeField] private Grid m_grid;
     [SerializeField] private DungeonMap m_dungeonMapObject;
-
-    //[SerializeField] private RoomData m_startRoom;
-    //[SerializeField] private List<RoomData> m_roomTilemaps = new List<RoomData>();
-
-    //[SerializeField] private List<HallwayReplacementTiles> m_hallwayReplacementTiles = new List<HallwayReplacementTiles>();
-    //private List<Vector3Int> m_roomLinks = new List<Vector3Int>();
-    //[SerializeField, ReadOnly] private List<Room> m_generatedRooms = new List<Room>();
-    //private List<Tilemap> m_colliderTilemaps = new List<Tilemap>();
-    //private List<Vector3Int> m_roomEntranceCells = new List<Vector3Int>();
 
     [SerializeField, ReadOnly] private Tilemap m_dungeonTilemap;
     [SerializeField, ReadOnly] private DungeonMap m_generatedDungeonMap;
@@ -83,11 +61,6 @@ public class LevelGenerator : MonoBehaviour
         m_generatedDungeonMap = newDungeonMap.GetComponent<DungeonMap>();
         m_currentDungeonMap = newDungeonMap;
         m_dungeonTilemap = m_generatedDungeonMap.tilemap;
-
-        //m_roomLinks.Clear();
-        //m_generatedRooms.Clear();
-        //m_colliderTilemaps.Clear();
-        //m_roomEntranceCells.Clear();
 
         AddStartRoom();
 
@@ -200,11 +173,6 @@ public class LevelGenerator : MonoBehaviour
         {
             m_roomsCount = m_roomsToGenerate;
         }
-    }
-
-    private void ValidateSettings()
-    {
-        // check variables are set
     }
 
     private void AddStartRoom()
