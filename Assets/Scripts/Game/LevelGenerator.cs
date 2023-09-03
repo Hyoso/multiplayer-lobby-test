@@ -32,7 +32,7 @@ public class LevelGenerator : NetworkBehaviour
     private const int MAX_ATTEMPTS = 99;
 
     [SerializeField] private NetworkVariable<int> m_seed = new NetworkVariable<int>();
-
+    [SerializeField] private Vector3Int m_spawnOffset;
     [SerializeField] private int m_roomsToGenerate = 5;
     [SerializeField] private Bounds m_mapBounds;
     [SerializeField] private Grid m_grid;
@@ -191,8 +191,8 @@ public class LevelGenerator : NetworkBehaviour
 
     private void AddStartRoom()
     {
-        CopyTilemap(m_generatedDungeonMap.startRoom.tilemap, m_dungeonTilemap, Vector3Int.zero);
-        GameObject colliderGO = CreateRoomCollider(m_generatedDungeonMap.startRoom.tilemap, Vector3Int.zero);
+        CopyTilemap(m_generatedDungeonMap.startRoom.tilemap, m_dungeonTilemap, m_spawnOffset);
+        GameObject colliderGO = CreateRoomCollider(m_generatedDungeonMap.startRoom.tilemap, m_spawnOffset);
         m_generatedDungeonMap.generatedRooms.Add(new Room()
         {
             roomId = m_generatedDungeonMap.generatedRooms.Count,
