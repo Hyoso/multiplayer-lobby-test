@@ -19,6 +19,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+
     [ServerRpc(RequireOwnership = true)]
     public void SpawnPlayerServerRpc(ulong clientId)
     {

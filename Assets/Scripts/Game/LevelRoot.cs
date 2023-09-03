@@ -1,21 +1,50 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using NaughtyAttributes;
 using Unity.Netcode;
 using UnityEngine;
 
 public class LevelRoot : NetworkBehaviour
 {
+    [SerializeField] private GameObject m_levelGenerator;
+
+    [SerializeField, ReadOnly] private GameObject m_spawnedLevelGenerator;
+
 	private void Awake()
 	{
 		GameManager.Instance.RegisterLevelRoot(this);
 		GameplayEvents.SendLevelLoadedEvent();
 	}
 
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer && IsClient)
+        {
+            SpawnLevelGeneratorServerRpc();
+        }
+
+        base.OnNetworkSpawn();
+    }
+
     public override void OnNetworkDespawn()
     {
-        base.OnNetworkDespawn();
+        Debug.Log("Despawned level root");
+        //NetworkObject networkObj = m_spawnedLevelGenerator.GetComponent<NetworkObject>();
+        //networkObj.Despawn(true);
 
-		Debug.Log("Despawned level root");
+        base.OnNetworkDespawn();
+    }
+
+    [ServerRpc]
+    public void SpawnLevelGeneratorServerRpc()
+    {
+        m_spawnedLevelGenerator = Instantiate(m_levelGenerator);
+        NetworkObject networkObj = m_spawnedLevelGenerator.GetComponent<NetworkObject>();
+        networkObj.Spawn(true);
+
+        m_spawnedLevelGenerator.transform.parent = transform;
     }
 }

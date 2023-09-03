@@ -1,16 +1,16 @@
 using NaughtyAttributes;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
-using static LevelGenerator;
 
 [ExecuteInEditMode]
-public class LevelGenerator : MonoBehaviour
+public class LevelGenerator : NetworkBehaviour
 {
-
     [System.Serializable]
     public struct HallwayReplacementTiles
     {
@@ -31,6 +31,8 @@ public class LevelGenerator : MonoBehaviour
 
     private const int MAX_ATTEMPTS = 99;
 
+    [SerializeField] private NetworkVariable<int> m_seed = new NetworkVariable<int>();
+
     [SerializeField] private int m_roomsToGenerate = 5;
     [SerializeField] private Bounds m_mapBounds;
     [SerializeField] private Grid m_grid;
@@ -43,21 +45,32 @@ public class LevelGenerator : MonoBehaviour
     private int m_roomsCount;
     private int m_attemptsCounter;
 
+    private void Start()
+    {
+    }
 
-    [Button]
-    public void Generate()
+    public override async void OnNetworkSpawn()
+    {
+        SetupNetworkSettings();
+
+        Random.InitState(m_seed.Value);
+        await Generate();
+
+        Debug.Log("Seed: " + m_seed.Value);
+    }
+
+    public async Task Generate()
     {
         if (m_currentDungeonMap)
         {
 #if UNITY_EDITOR
             DestroyImmediate(m_currentDungeonMap);
-#else
-            Destroy(m_currentDungeonMap);
 #endif
         }
 
         GameObject newDungeonMap = Instantiate(m_dungeonMapObject.gameObject);
         newDungeonMap.transform.parent = m_grid.transform;
+        newDungeonMap.transform.localPosition = Vector3.zero;
         m_generatedDungeonMap = newDungeonMap.GetComponent<DungeonMap>();
         m_currentDungeonMap = newDungeonMap;
         m_dungeonTilemap = m_generatedDungeonMap.tilemap;
@@ -89,14 +102,15 @@ public class LevelGenerator : MonoBehaviour
         AddRoomDoors();
         // replace room entrance tiles
         ReplaceTiles(m_dungeonTilemap, m_generatedDungeonMap.roomEntranceCells, m_generatedDungeonMap.floorTile);
+        await Task.Delay(50);
     }
 
-    
+
     private void OnDrawGizmos()
     {
         GizmosUtils.DrawBoundingBox(m_mapBounds, Color.red);
 
-        if (m_generatedDungeonMap.generatedRooms != null)
+        if (m_generatedDungeonMap != null && m_generatedDungeonMap.generatedRooms != null)
         {
             foreach (var room in m_generatedDungeonMap.generatedRooms)
             {
@@ -528,6 +542,14 @@ public class LevelGenerator : MonoBehaviour
                 }
                 to.SetTile(newTilePos, tile);
             }
+        }
+    }
+     
+    private void SetupNetworkSettings()
+    {
+        if (IsServer && IsClient)
+        {
+            m_seed.Value = System.Environment.TickCount;
         }
     }
 }
