@@ -10,6 +10,7 @@ public static partial class GameplayEvents
 	public delegate void BoolDelegate(bool boolValue);
 	public delegate void FloatDelegate(float floatValue);
 	public delegate void LongDelegate(long longValue);
+	public delegate void TrinketDelegate(TrinketSO trinket);
 
 	public static event BasicDelegate StartGameEvent;
 	public static void SendStartGameEvent()
@@ -76,4 +77,10 @@ public static partial class GameplayEvents
     {
         onJoinHostAttempt?.Invoke();
     }
+
+	public static event TrinketDelegate onTrinketEquipped;
+	public static void SendOnTrinketEquippedEvent(TrinketSO trinket)
+	{
+		onTrinketEquipped?.Invoke(trinket);
+	}
 }

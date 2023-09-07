@@ -23,6 +23,7 @@ public class Character : NetworkBehaviour
     }
 
 	[SerializeField] private PlayerSO m_characterSO;
+    [SerializeField] private PlayerStatsController m_stats;
 
 	private CharacterBaseSO m_characterController;
 

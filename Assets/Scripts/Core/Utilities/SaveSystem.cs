@@ -272,8 +272,9 @@ public class SaveSystem : Singleton<SaveSystem>
 		{
 			string fullKey = !string.IsNullOrEmpty(subKey) ? key + subKey : key;
 			bucket.SetValue(fullKey, value);
-		}
-	}
+			Save();
+        }
+    }
 
 	public void SetList<T>(string key, string subKey, List<T> list)
 	{
@@ -283,8 +284,9 @@ public class SaveSystem : Singleton<SaveSystem>
 			listSaveHolder.savedList = list;
 			string dataString = JsonUtility.ToJson(listSaveHolder);
 			SetString(key, subKey, dataString);
-		}
-		catch (Exception e)
+			Save();
+        }
+        catch (Exception e)
 		{
 			Debug.LogError("Failed to set list: " + e.ToString());
 		}
@@ -302,8 +304,9 @@ public class SaveSystem : Singleton<SaveSystem>
 
 			string dataString = JsonUtility.ToJson(dictionaryList);
 			SetString(key, subKey, dataString);
-		}
-		catch (Exception e)
+			Save();
+        }
+        catch (Exception e)
 		{
 			Debug.LogError("Set dictionary failed " + e.ToString());
 		}
