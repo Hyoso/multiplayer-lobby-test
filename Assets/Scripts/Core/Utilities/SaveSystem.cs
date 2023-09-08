@@ -211,7 +211,52 @@ public class SaveSystem : Singleton<SaveSystem>
 		return output;
 	}
 
-	public Dictionary<K, V> GetDictionary<K, V>(string key, string subKey = "")
+	public T GetObject<T>(string key, string subKey = "")
+	{
+        try
+        {
+            string saveData = GetString(key, subKey, "");
+            if (!string.IsNullOrEmpty(saveData))
+            {
+                T output = JsonUtility.FromJson<T>(saveData);
+                if (output != null)
+                {
+					return output;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to get list from loading: " + e.ToString());
+        }
+
+        return default(T);
+    }
+
+	public ScriptableObject GetScriptableObject<T>(string key, string subKey = "")
+	{
+        try
+        {
+            string saveData = GetString(key, subKey, "");
+            if (!string.IsNullOrEmpty(saveData))
+            {
+				var scriptableObject = ScriptableObject.CreateInstance(typeof(T));
+				JsonUtility.FromJsonOverwrite(saveData, scriptableObject);
+                if (scriptableObject != null)
+                {
+                    return scriptableObject;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to get list from loading: " + e.ToString());
+        }
+
+		return null;
+    }
+
+    public Dictionary<K, V> GetDictionary<K, V>(string key, string subKey = "")
 	{
 		Dictionary<K, V> output = new Dictionary<K, V>();
 
@@ -292,7 +337,26 @@ public class SaveSystem : Singleton<SaveSystem>
 		}
 	}
 
-	public void SetDictionary<K, V>(string key, string subKey, Dictionary<K, V> dictionary)
+    public void SetObject<T>(string key, T obj, string subKey = "")
+    {
+        try
+        {
+            string dataString = JsonUtility.ToJson(obj, true);
+            SetString(key, subKey, dataString);
+            Save();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to set object: " + e.ToString());
+        }
+    }
+
+    public void SetScriptableObject<T>(string key, T obj, string subKey = "")
+    {
+		SetObject<T>(key, obj, subKey);
+    }
+
+    public void SetDictionary<K, V>(string key, string subKey, Dictionary<K, V> dictionary)
 	{
 		try
 		{

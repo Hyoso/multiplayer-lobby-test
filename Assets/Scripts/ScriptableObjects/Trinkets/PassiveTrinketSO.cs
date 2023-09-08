@@ -10,6 +10,10 @@ public class PassiveTrinketSO : TrinketSO
         return TrinketType.PASSIVE;
     }
 
+    public override void Update()
+    {
+    }
+
     protected override void UseActive()
     {
     }

@@ -13,29 +13,14 @@ public abstract class TrinketSO : ScriptableObject
 
     public string displayName;
     public Sprite icon;
-    public float cooldown;
     public PlayerStats boostToPlayerStats = new PlayerStats();
     public List<TrinketSO> requirements = new List<TrinketSO>();
     public List<CosmeticSO> cosmetics = new List<CosmeticSO>();
 
     public abstract TrinketType GetTrinketType();
+    public abstract void Update();
     protected abstract void UseActive();
 
-    public void TryUseActive()
-    {
-        if (CanUseActive() && GetTrinketType() == TrinketType.ACTIVE)
-        {
-            UseActive();
-        }
-    }
-
-    public void UpdateCooldown()
-    {
-        if (cooldown > 0)
-        {
-            cooldown -= Time.deltaTime;
-        }
-    }
 
     public bool CanUnlock()
     {
@@ -50,11 +35,5 @@ public abstract class TrinketSO : ScriptableObject
     public bool IsUnlocked()
     {
         return true;
-    }
-
-    protected bool CanUseActive()
-    {
-        bool canUseActive = cooldown <= 0;
-        return canUseActive;
     }
 }

@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09a8432f028d43e479622d6979500557, type: 3}
   m_Name: DefaultActiveTrinket
   m_EditorClassIdentifier: 
-  displayName: 
-  icon: {fileID: 0}
-  cooldown: 0
-  type: 0
+  displayName: Default Active Trinket
+  icon: {fileID: 21300000, guid: 05ecba458c601454c8b686c3ef0b3ba7, type: 3}
   requirements: []
-  cosmetics: []
-  type: 0
+  cosmetics:
+  - {fileID: 11400000, guid: 71a1498fad3bcda44bc88298c11f1e20, type: 2}
+  m_cooldown: 3

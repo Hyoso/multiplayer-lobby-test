@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class PlayerStatsController : NetworkBehaviour
 {
-    [SerializeField] private TrinketSO m_activeTrinket;
-    [SerializeField] private List<TrinketSO> m_passiveTrinkets = new List<TrinketSO>();
+    [SerializeField] private ActiveTrinketSO m_defaultActiveTrinket;
+
+    [SerializeField] private ActiveTrinketSO m_activeTrinket;
+    [SerializeField] private List<PassiveTrinketSO> m_passiveTrinkets = new List<PassiveTrinketSO>();
    
     // cosmetics maybe come later?
     private List<CosmeticSO> m_cosmetics = new List<CosmeticSO>();
@@ -15,21 +17,40 @@ public class PlayerStatsController : NetworkBehaviour
 
     private void Awake()
     {
-        GameplayEvents.onTrinketEquipped += GameplayEvents_onTrinketEquipped;
+        GameplayEvents.onActiveTrinketEquipped += GameplayEvents_onActiveTrinketEquipped;
+        GameplayEvents.onPassiveTrinketEquipped += GameplayEvents_onPassiveTrinketEquipped;
     }
 
     private void Start()
     {
-        if (IsLocalPlayer)
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        m_characterDisplay = GetComponent<CharacterDisplay>();
+
+        if (IsClient && IsOwner)
         {
-            LoadSkills();
+            LoadTrinkets();
             LoadCosmetics();
+
+            foreach (var item in m_passiveTrinkets)
+            {
+                UpdateCharacterDisplay(item.cosmetics);
+            }
+            UpdateCharacterDisplay(m_activeTrinket?.cosmetics);
+            UpdateCharacterDisplay(m_cosmetics);
         }
     }
 
-    private void OnDestroy()
+    public override void OnDestroy()
     {
-        GameplayEvents.onTrinketEquipped -= GameplayEvents_onTrinketEquipped;
+        GameplayEvents.onActiveTrinketEquipped -= GameplayEvents_onActiveTrinketEquipped;
+        GameplayEvents.onPassiveTrinketEquipped -= GameplayEvents_onPassiveTrinketEquipped;
+
+        base.OnDestroy();
     }
 
     public void RegisterCharacterDisplay(CharacterDisplay characterDisplay)
@@ -37,19 +58,24 @@ public class PlayerStatsController : NetworkBehaviour
         m_characterDisplay = characterDisplay;
     }
 
-    public void AddItem(TrinketSO trinket)
+    public void AddTrinket(ActiveTrinketSO trinket)
     {
         if (trinket == null) { return; }
 
-        if (trinket.GetTrinketType() == TrinketSO.TrinketType.ACTIVE)
-        {
-            UnEquip(trinket);
-            Equip(trinket);
-        }
-        else if (trinket.GetTrinketType() == TrinketSO.TrinketType.PASSIVE)
-        {
-            Equip(trinket);
-        }
+        UnEquip(m_activeTrinket);
+        Equip(trinket);
+
+        UpdateCharacterDisplay(trinket.cosmetics);
+        SaveTrinkets();
+    }
+
+    public void AddTrinket(PassiveTrinketSO trinket)
+    {
+        if (trinket == null) { return; }
+
+        Equip(trinket);
+        UpdateCharacterDisplay(trinket.cosmetics);
+        SaveTrinkets();
     }
 
     public void AddItem(CosmeticSO cosmetic)
@@ -72,6 +98,8 @@ public class PlayerStatsController : NetworkBehaviour
         { 
             Equip(cosmetic);
         }
+
+        UpdateCharacterDisplay(new List<CosmeticSO>() { cosmetic });
     }
 
     public float GetSkillValue(PlayerStats.StatType type)
@@ -85,26 +113,45 @@ public class PlayerStatsController : NetworkBehaviour
         return total;
     }
 
-    private void GameplayEvents_onTrinketEquipped(TrinketSO trinket)
+    private void UpdateCharacterDisplay(List<CosmeticSO> cosmetics)
     {
-        if (IsLocalPlayer)
+        if (cosmetics == null) { return; }
+
+        foreach (var item in cosmetics)
         {
-            Equip(trinket);
+            m_characterDisplay.UpdateCosmetic(item);
         }
     }
 
-    private void Equip(TrinketSO trinket)
+    private void GameplayEvents_onActiveTrinketEquipped(ActiveTrinketSO trinket)
+    {
+        if (IsClient && IsOwner)
+        {
+            AddTrinket(trinket);
+        }
+    }
+
+    private void GameplayEvents_onPassiveTrinketEquipped(PassiveTrinketSO trinket)
+    {
+        if (IsClient && IsOwner)
+        {
+            AddTrinket(trinket);
+        }
+    }
+
+    private void Equip(PassiveTrinketSO trinket)
     {
         // todo: update player character with new sprite
-
-        if (trinket.GetTrinketType() == TrinketSO.TrinketType.ACTIVE)
-        {
-            m_activeTrinket = trinket;
-        }
-        else if (trinket.GetTrinketType() == TrinketSO.TrinketType.PASSIVE)
+        if (!m_passiveTrinkets.Contains(trinket))
         {
             m_passiveTrinkets.Add(trinket);
         }
+    }
+
+    private void Equip(ActiveTrinketSO activeTrinket)
+    {
+        // todo: update player character with new sprite
+        m_activeTrinket = activeTrinket;
     }
 
     private void Equip(CosmeticSO cosmetic)
@@ -114,18 +161,14 @@ public class PlayerStatsController : NetworkBehaviour
         m_cosmetics.Add(cosmetic);
     }
 
-    private void UnEquip(TrinketSO trinket)
+    private void UnEquip(PassiveTrinketSO trinket)
     {
-        // todo: update player character with new sprite
+        m_passiveTrinkets.Remove(trinket);
+    }
 
-        if (trinket.GetTrinketType() == TrinketSO.TrinketType.ACTIVE)
-        {
-            m_activeTrinket = null;
-        }
-        else if (trinket.GetTrinketType() == TrinketSO.TrinketType.PASSIVE)
-        {
-            m_passiveTrinkets.Remove(trinket);
-        }
+    private void UnEquip(ActiveTrinketSO activeTrinket)
+    {
+        m_activeTrinket = null;
     }
 
     private void UnEquip(CosmeticSO cosmetic)
@@ -135,9 +178,16 @@ public class PlayerStatsController : NetworkBehaviour
         m_cosmetics.Remove(cosmetic);
     }
 
-    private void LoadSkills()
+    private void LoadTrinkets()
     {
-        m_passiveTrinkets = SaveSystem.Instance.GetList<TrinketSO>(BucketGameplay.EQUIPPED_TRINKETS);
+        m_passiveTrinkets = SaveSystem.Instance.GetList<PassiveTrinketSO>(BucketGameplay.PASSIVE_TRINKETS);
+        m_activeTrinket = SaveSystem.Instance.GetScriptableObject<ActiveTrinketSO>(BucketGameplay.ACTIVE_TRINKET) as ActiveTrinketSO;
+    }
+
+    public void SaveTrinkets()
+    {
+        SaveSystem.Instance.SetList(BucketGameplay.PASSIVE_TRINKETS, "", m_passiveTrinkets);
+        SaveSystem.Instance.SetScriptableObject(BucketGameplay.ACTIVE_TRINKET, m_activeTrinket);
     }
 
     private void LoadCosmetics()

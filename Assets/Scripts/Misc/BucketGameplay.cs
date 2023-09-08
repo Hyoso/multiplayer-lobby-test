@@ -12,7 +12,7 @@ public class BucketGameplay : BucketBase
 	public static string AD_COUNTER = "AD_COUNTER";
 	public static string NEXT_AD_COUNT = "NEXT_AD_COUNT";
 	public static string TRINKET_SHOP_LEVEL = "TRINKET_SHOP_LEVEL";
-	public static string EQUIPPED_TRINKETS = "EQUIPPED_TRINKETS";
+	public static string PASSIVE_TRINKETS = "PASSIVE_TRINKETS";
 	public static string ACTIVE_TRINKET = "ACTIVE_TRINKET";
     public static string EQUIPPED_COSMETICS = "EQUIPPED_COSMETICS";
     
@@ -34,7 +34,7 @@ public class BucketGameplay : BucketBase
 		keyBucketDict.Add(AD_COUNTER, this);
 		keyBucketDict.Add(NEXT_AD_COUNT, this);
 		keyBucketDict.Add(TRINKET_SHOP_LEVEL, this);
-		keyBucketDict.Add(EQUIPPED_TRINKETS, this);
+		keyBucketDict.Add(PASSIVE_TRINKETS, this);
         keyBucketDict.Add(ACTIVE_TRINKET, this);
         keyBucketDict.Add(EQUIPPED_COSMETICS, this);
     }

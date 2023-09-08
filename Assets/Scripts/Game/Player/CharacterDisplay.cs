@@ -32,27 +32,42 @@ public class CharacterDisplay : NetworkBehaviour
 
     private void UpdateHat(CosmeticSO cosmetic)
     {
-        m_hat.sprite = cosmetic.equippedSprite;
+        SpriteRenderer sr = CreateSpriteRendererObjCopy(m_hat.gameObject);
+        sr.sprite = cosmetic.equippedSprite;
     }
 
     private void UpdateFeet(CosmeticSO cosmetic)
     {
-        m_feet.sprite = cosmetic.equippedSprite;
+        SpriteRenderer sr = CreateSpriteRendererObjCopy(m_feet.gameObject);
+        sr.sprite = cosmetic.equippedSprite;
     }
 
     private void UpdateFeather(CosmeticSO cosmetic)
     {
-        m_feather.sprite = cosmetic.equippedSprite;
+        SpriteRenderer sr = CreateSpriteRendererObjCopy(m_feather.gameObject);
+        sr.sprite = cosmetic.equippedSprite;
     }
 
     private void UpdateBody(CosmeticSO cosmetic)
     {
-        m_body.sprite = cosmetic.equippedSprite;
+        SpriteRenderer sr = CreateSpriteRendererObjCopy(m_body.gameObject);
+        sr.sprite = cosmetic.equippedSprite;
     }
 
     private void UpdateTrail(CosmeticSO cosmetic)
     {
         //todo: change the trail renderer image to this sprite
-        m_trail.sprite = cosmetic.equippedSprite;
+        SpriteRenderer sr = CreateSpriteRendererObjCopy(m_trail.gameObject);
+        sr.sprite = cosmetic.equippedSprite;
+    }
+
+    private SpriteRenderer CreateSpriteRendererObjCopy(GameObject go)
+    {
+        GameObject copy = Instantiate(go);
+        copy.transform.parent = go.transform.parent;
+
+        SpriteRenderer sr = copy.GetComponent<SpriteRenderer>();
+
+        return sr;
     }
 }

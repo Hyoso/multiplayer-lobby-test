@@ -2125,7 +2125,7 @@ GameObject:
   - component: {fileID: 1719643179}
   - component: {fileID: 1719643180}
   m_Layer: 0
-  m_Name: TrinketsTestManager
+  m_Name: TrinketsPoolManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2155,9 +2155,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1719643178}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab87da3da8683b44684b38b20c20be07, type: 3}
+  m_Script: {fileID: 11500000, guid: d259be8b57f9c4d46a0e80b64cd2b694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  passiveTrinket: {fileID: 11400000, guid: 0a0cbf92123895c46b2a05231998c627, type: 2}
+  activeTrinket: {fileID: 11400000, guid: 73915bb60e3ae404a89e299931ea4e7b, type: 2}
+  m_allActiveTrinkets:
+  - {fileID: 11400000, guid: 8024e18929b88c342ae8fc07fb24e5f5, type: 2}
+  m_allPassiveTrinkets:
+  - {fileID: 11400000, guid: 0a0cbf92123895c46b2a05231998c627, type: 2}
 --- !u!1 &1810141963
 GameObject:
   m_ObjectHideFlags: 0
