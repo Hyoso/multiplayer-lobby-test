@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using QFSW.QC;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,14 +15,14 @@ public class TrinketsPoolManager : Singleton<TrinketsPoolManager>
     {
     }
 
-    [Button]
+    [Button, Command]
     public void EquipActive()
     {
         GameplayEvents.SendOnActiveTrinketEquippedEvent(activeTrinket);
     }
 
 
-    [Button]
+    [Button, Command]
     public void EquipPassive()
     {
         GameplayEvents.SendOnPassiveTrinketEquippedEvent(passiveTrinket);
