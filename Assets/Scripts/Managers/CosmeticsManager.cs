@@ -20,30 +20,6 @@ public class CosmeticsManager : Singleton<CosmeticsManager>
     {
     }
 
-    private void OnValidate()
-    {
-#if UNITY_EDITOR
-        string folderPath = "Assets/Data/Cosmetics/";
-
-        List<CosmeticSO> scriptableObjects = new List<CosmeticSO>();
-
-        foreach (var folder in cosmeticFolders)
-        {
-            string path = folderPath + folder;
-            scriptableObjects.AddRange(LoadScriptableObjectsFromFolder<CosmeticSO>(path));
-        }
-
-        foreach (CosmeticSO obj in scriptableObjects)
-        {
-            if (!m_cosmetics.Contains(obj))
-            {
-                m_cosmetics.Add(obj);
-            }
-        }
-#endif
-    }
-
-
     public Sprite GetSprite(string spriteName)
     {
         CosmeticSO cosmetic = m_cosmetics.Find((x) => x.equippedSprite.name == spriteName);
@@ -55,24 +31,26 @@ public class CosmeticsManager : Singleton<CosmeticsManager>
         return null;
     }
 
-    private List<T> LoadScriptableObjectsFromFolder<T>(string folderPath) where T : ScriptableObject
+    private void OnValidate()
     {
-        List<T> loadedObjects = new List<T>();
+#if UNITY_EDITOR
+        string folderPath = "Assets/Data/Cosmetics/";
 
-        // Find all assets of the specified type in the folder
-        string[] assetPaths = AssetDatabase.FindAssets("t:" + typeof(T).Name, new[] { folderPath });
+        List<CosmeticSO> scriptableObjects = new List<CosmeticSO>();
 
-        foreach (string assetPath in assetPaths)
+        foreach (var folder in cosmeticFolders)
         {
-            // Load the Scriptable Object from the asset path
-            T loadedObject = AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(assetPath));
-
-            if (loadedObject != null)
-            {
-                loadedObjects.Add(loadedObject);
-            }
+            string path = folderPath + folder;
+            scriptableObjects.AddRange(ScriptableObjectUtils.LoadScriptableObjectsFromFolder<CosmeticSO>(path));
         }
 
-        return loadedObjects;
+        foreach (CosmeticSO obj in scriptableObjects)
+        {
+            if (!m_cosmetics.Contains(obj))
+            {
+                m_cosmetics.Add(obj);
+            }
+        }
+#endif
     }
 }

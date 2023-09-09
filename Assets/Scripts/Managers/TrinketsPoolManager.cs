@@ -1,5 +1,6 @@
 using NaughtyAttributes;
 using QFSW.QC;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -90,6 +91,30 @@ public class TrinketsPoolManager : Singleton<TrinketsPoolManager>
             if (item.IsUnlocked())
             {
                 m_unlockedPassiveTrinkets.Add(item);
+            }
+        }
+    }
+
+    private void OnValidate()
+    {
+#if UNITY_EDITOR
+        SearchTrinkets<ActiveTrinketSO>("Active", ref m_allActiveTrinkets);
+        SearchTrinkets<PassiveTrinketSO>("Passive", ref m_allPassiveTrinkets);
+#endif
+    }
+
+    private void SearchTrinkets<T>(string folderName, ref List<T> trinketsList) where T : ScriptableObject
+    {
+        string folderPath = "Assets/Data/Trinkets/";
+
+        string activeTrinketsPath = folderPath + folderName;
+        List<T> activeTrinkets = ScriptableObjectUtils.LoadScriptableObjectsFromFolder<T>(activeTrinketsPath);
+
+        foreach (T obj in activeTrinkets)
+        {
+            if (!trinketsList.Contains(obj))
+            {
+                trinketsList.Add(obj);
             }
         }
     }

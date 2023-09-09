@@ -2210,8 +2210,10 @@ MonoBehaviour:
   activeTrinket: {fileID: 11400000, guid: 73915bb60e3ae404a89e299931ea4e7b, type: 2}
   m_allActiveTrinkets:
   - {fileID: 11400000, guid: 8024e18929b88c342ae8fc07fb24e5f5, type: 2}
+  - {fileID: 11400000, guid: 73915bb60e3ae404a89e299931ea4e7b, type: 2}
   m_allPassiveTrinkets:
   - {fileID: 11400000, guid: 0a0cbf92123895c46b2a05231998c627, type: 2}
+  - {fileID: 11400000, guid: 1d6d29d6e198ad0429e5f249fcfb5801, type: 2}
 --- !u!1 &1810141963
 GameObject:
   m_ObjectHideFlags: 0
