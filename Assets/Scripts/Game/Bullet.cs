@@ -1,16 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : NetworkBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
-        
     }
 
-    // Update is called once per frame
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            base.OnNetworkSpawn();
+
+            StartCoroutine(Coroutines.Delay(3f, () =>
+            {
+                GetComponent<NetworkObject>().Despawn(true);
+            }));
+        }
+    }
+
     void Update()
     {
         transform.position += Vector3.up * Time.deltaTime;

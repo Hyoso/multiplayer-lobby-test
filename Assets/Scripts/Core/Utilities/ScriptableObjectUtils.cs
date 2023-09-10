@@ -1,7 +1,11 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+#if UNITY_EDITOR
 public static class ScriptableObjectUtils
 {
     public static List<T> LoadScriptableObjectsFromFolder<T>(string folderPath) where T : ScriptableObject
@@ -25,3 +29,4 @@ public static class ScriptableObjectUtils
         return loadedObjects;
     }
 }
+#endif

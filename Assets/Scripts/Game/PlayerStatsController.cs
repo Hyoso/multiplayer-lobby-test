@@ -73,9 +73,12 @@ public class PlayerStatsController : NetworkBehaviour
     {
         if (trinket == null) { return; }
 
-        Equip(trinket);
-        UpdateCharacterDisplay(trinket.cosmetics);
-        SaveTrinkets();
+        bool added = Equip(trinket);
+        if (added)
+        {
+            UpdateCharacterDisplay(trinket.cosmetics);
+            SaveTrinkets();
+        }
     }
 
     public void AddItem(CosmeticSO cosmetic)
@@ -139,13 +142,19 @@ public class PlayerStatsController : NetworkBehaviour
         }
     }
 
-    private void Equip(PassiveTrinketSO trinket)
+    private bool Equip(PassiveTrinketSO trinket)
     {
         // todo: update player character with new sprite
-        if (!m_passiveTrinkets.Contains(trinket))
+
+        bool cosmeticsContainsHat = trinket.cosmetics.Find(x => x.type == CosmeticSO.CosmeticType.HAT);
+        if (!m_passiveTrinkets.Contains(trinket) || cosmeticsContainsHat)
         {
             m_passiveTrinkets.Add(trinket);
+
+            return true;
         }
+
+        return false;
     }
 
     private void Equip(ActiveTrinketSO activeTrinket)

@@ -56,7 +56,6 @@ public class Character : NetworkBehaviour
     {
         base.OnNetworkDespawn();
 
-
         if (IsOwner)
         {
             GameNetworkManager.Instance.SetLastPlayerState(new GameNetworkManager.LastPlayerState

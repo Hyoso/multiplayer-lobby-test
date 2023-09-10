@@ -289,6 +289,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cf490d47ab4eeb49b8750ae01788bbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_netCosmetic: {fileID: 1501668356851597271, guid: ee7c4a547f836a84282c714e430413ab,
+    type: 3}
   m_hat: {fileID: 1735786301566895484}
   m_feet: {fileID: 6177439242414969809}
   m_feather: {fileID: 7697937551152520456}

@@ -105,6 +105,7 @@ public class TrinketsPoolManager : Singleton<TrinketsPoolManager>
 
     private void SearchTrinkets<T>(string folderName, ref List<T> trinketsList) where T : ScriptableObject
     {
+#if UNITY_EDITOR
         string folderPath = "Assets/Data/Trinkets/";
 
         string activeTrinketsPath = folderPath + folderName;
@@ -117,5 +118,6 @@ public class TrinketsPoolManager : Singleton<TrinketsPoolManager>
                 trinketsList.Add(obj);
             }
         }
+#endif
     }
 }
