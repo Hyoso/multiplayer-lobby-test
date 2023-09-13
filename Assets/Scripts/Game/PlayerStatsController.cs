@@ -36,12 +36,19 @@ public class PlayerStatsController : NetworkBehaviour
             LoadTrinkets();
             LoadCosmetics();
 
-            foreach (var item in m_passiveTrinkets)
+            // delay so that the object pool can setup first
+            StartCoroutine(Coroutines.Delay(0, () =>
             {
-                UpdateCharacterDisplay(item.cosmetics);
-            }
-            UpdateCharacterDisplay(m_activeTrinket?.cosmetics);
-            UpdateCharacterDisplay(m_cosmetics);
+                if (m_passiveTrinkets.Count > 0)
+                {
+                    foreach (var item in m_passiveTrinkets)
+                    {
+                        UpdateCharacterDisplay(item.cosmetics);
+                    }
+                }
+                UpdateCharacterDisplay(m_activeTrinket?.cosmetics);
+                UpdateCharacterDisplay(m_cosmetics);
+            }));
         }
     }
 

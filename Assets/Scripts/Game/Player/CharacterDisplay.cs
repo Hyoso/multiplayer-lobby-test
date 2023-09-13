@@ -69,22 +69,15 @@ public class CharacterDisplay : NetworkBehaviour
     {
         if (go.TryGet<CharacterDisplay>(out CharacterDisplay charDisplay))
         {
-            NetworkObject parentNetworkObject = charDisplay.GetComponentInParent<NetworkObject>(); ;
+            SpriteRenderer netObject = CreateSpriteRendererObjCopy(m_netCosmetic);
+            NetworkObject parentNetworkObject = charDisplay.GetComponentInParent<NetworkObject>();
 
-            SpriteRenderer sr = CreateSpriteRendererObjCopy(m_netCosmetic);
+            SpriteRenderer sr = netObject.GetComponent<SpriteRenderer>();
             sr.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId, true);
             sr.GetComponent<NetworkObject>().TrySetParent(parentNetworkObject);
 
             SetupHatSpriteClientRpc(sr.GetComponent<ClientNetworkTransform>(), newSpriteName);
-            
-            //charDisplay.m_hatsCounter++;
-
-            //CreateHatClientRpc(go, newSpriteName);
         }
-
-        //Debug.Log("Server doing something");
-
-        //CreateHatClientRpc(go, newSpriteName);
     }
 
     [ClientRpc]
