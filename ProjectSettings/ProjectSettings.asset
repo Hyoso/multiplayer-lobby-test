@@ -735,6 +735,7 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     Android: 
+    Standalone: COM_UNITY_MODULES_ANIMATION
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

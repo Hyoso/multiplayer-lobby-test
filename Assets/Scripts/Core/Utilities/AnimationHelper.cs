@@ -192,7 +192,7 @@ public class AnimationHelper : MonoBehaviour
 
 				if (isPlaying)
 				{
-					Debug.LogError("Animation is already playing");
+					//Debug.LogError("Animation is already playing");
 					return;
 				}
 			}
