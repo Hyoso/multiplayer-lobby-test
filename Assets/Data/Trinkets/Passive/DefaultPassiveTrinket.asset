@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DefaultPassiveTrinket
   m_EditorClassIdentifier: 
   displayName: Default Passive Trinket
-  icon: {fileID: 21300000, guid: 05ecba458c601454c8b686c3ef0b3ba7, type: 3}
+  icon: {fileID: 1152922866, guid: 1eac61c1733f3384ca593f49b87ecf5f, type: 3}
   requirements: []
   cosmetics:
   - {fileID: 11400000, guid: 44609f5d477350741b53a9a5b96c5515, type: 2}

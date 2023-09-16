@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e38b07c2f515380448fda3c8a02f3de8, type: 3}
   m_Name: DefaultHat
   m_EditorClassIdentifier: 
+  cosmeticName: 
   type: 0
-  equippedSprite: {fileID: 21300000, guid: 05ecba458c601454c8b686c3ef0b3ba7, type: 3}
-  icon: {fileID: 21300000, guid: 05ecba458c601454c8b686c3ef0b3ba7, type: 3}
+  equippedSprite: {fileID: 470555850, guid: 1eac61c1733f3384ca593f49b87ecf5f, type: 3}
+  icon: {fileID: 470555850, guid: 1eac61c1733f3384ca593f49b87ecf5f, type: 3}
