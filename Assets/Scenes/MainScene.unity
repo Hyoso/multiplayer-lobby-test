@@ -1652,6 +1652,7 @@ MonoBehaviour:
   m_canvas: {fileID: 2031091278}
   m_levelOverride: -1
   m_playerCam: {fileID: 768726886}
+  m_networkPlayerController: {fileID: 0}
 --- !u!1 &1040113000
 GameObject:
   m_ObjectHideFlags: 0
@@ -2604,11 +2605,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2031091279}
     m_Modifications:
-    - target: {fileID: 3215667703175395859, guid: 7bea00e599975ac46a13dd45eeadf9ec,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4583142703469882748, guid: 7bea00e599975ac46a13dd45eeadf9ec,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2798,11 +2794,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8703758955653380625, guid: 7bea00e599975ac46a13dd45eeadf9ec,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -100.30029
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

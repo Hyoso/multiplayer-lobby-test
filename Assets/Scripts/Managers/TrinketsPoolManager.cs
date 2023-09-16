@@ -75,6 +75,12 @@ public class TrinketsPoolManager : Singleton<TrinketsPoolManager>
         return trinket;
     }
 
+    public PassiveTrinketSO GetPassiveTrinketWithName(string trinketName)
+    {
+        PassiveTrinketSO trinket = m_allPassiveTrinkets.Find(x => x.displayName == trinketName);
+        return trinket;
+    }
+
     private void PopulateUnlockedTrinkets()
     {
 

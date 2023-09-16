@@ -196,13 +196,32 @@ public class PlayerStatsController : NetworkBehaviour
 
     private void LoadTrinkets()
     {
-        m_passiveTrinkets = SaveSystem.Instance.GetList<PassiveTrinketSO>(BucketGameplay.PASSIVE_TRINKETS);
+        List<string> passiveTrinketsList = SaveSystem.Instance.GetList<string>(BucketGameplay.PASSIVE_TRINKETS);
+        foreach (var trinketName in passiveTrinketsList)
+        {
+            PassiveTrinketSO trinket = TrinketsPoolManager.Instance.GetPassiveTrinketWithName(trinketName);
+            if (trinket == null)
+            {
+                Debug.LogError("Could not find trinket with name: " + trinketName);
+            }
+            else
+            {
+                m_passiveTrinkets.Add(ScriptableObject.Instantiate(trinket));
+            }
+        }
+
         m_activeTrinket = SaveSystem.Instance.GetScriptableObject<ActiveTrinketSO>(BucketGameplay.ACTIVE_TRINKET) as ActiveTrinketSO;
     }
 
     public void SaveTrinkets()
     {
-        SaveSystem.Instance.SetList(BucketGameplay.PASSIVE_TRINKETS, "", m_passiveTrinkets);
+        List<string> passiveTrinketsList = new List<string>();
+        foreach (var trinket in m_passiveTrinkets)
+        {
+            passiveTrinketsList.Add(trinket.displayName);
+        }
+
+        SaveSystem.Instance.SetList(BucketGameplay.PASSIVE_TRINKETS, "", passiveTrinketsList);
         SaveSystem.Instance.SetScriptableObject(BucketGameplay.ACTIVE_TRINKET, m_activeTrinket);
     }
 

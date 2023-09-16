@@ -142,9 +142,9 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 11400000, guid: 6bdbd63cb5b6a9942b0868e78549cd9c, type: 2}
-  m_roomLinks: []
-  m_colliderTilemaps: []
-  m_roomEntranceCells: []
+  roomLinks: []
+  colliderTilemaps: []
+  roomEntranceCells: []
   tilemap: {fileID: 4544904908691427670}
   m_tilemapColliderPrefab: {fileID: 8566281484779547315, guid: 034d3af6cc01d45408eeb905756f6c6d,
     type: 3}
@@ -231,7 +231,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: fa45f36b5a3f0ad43bb424836e99de3d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
