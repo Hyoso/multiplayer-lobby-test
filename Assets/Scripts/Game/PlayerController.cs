@@ -16,7 +16,15 @@ public class PlayerController : NetworkBehaviour
         if (IsOwner)
         {
             SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
+            GameManager.Instance.RegisterLocalPlayer(this);
         }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        GameManager.Instance.RegisterLocalPlayer(null);
+
+        base.OnNetworkDespawn();
     }
 
 
@@ -29,5 +37,14 @@ public class PlayerController : NetworkBehaviour
 
         m_spawnedPlayerObject = player;
         m_spawnedPlayerObject.name = "Client " + clientId;
+    }
+
+    [ServerRpc]
+    public void GenerateLevelServerRpc()
+    {
+        if (IsServer)
+        {
+            GameplayEvents.SendGenerateNewLevelEvent();
+        }
     }
 }

@@ -44,7 +44,6 @@ public class LevelRoot : NetworkBehaviour
         m_spawnedLevelGenerator = Instantiate(m_levelGenerator);
         NetworkObject networkObj = m_spawnedLevelGenerator.GetComponent<NetworkObject>();
         networkObj.Spawn(true);
-
-        m_spawnedLevelGenerator.transform.parent = transform;
+        networkObj.TrySetParent(transform);
     }
 }

@@ -8,7 +8,7 @@ public class TagsGenerator : MonoBehaviour
 	[MenuItem("Tools/Generate Tags")]
 	public static void GenerateTags()
 	{
-		string baseClassPath = "Assets/Editor/TagsBase.txt";
+		string baseClassPath = "Assets/Scripts/Core/Editor/TagsBase.txt";
 		string outputPath = "Assets/Scripts/Misc/Generated/Tags.cs";
 
 		StreamReader reader = new StreamReader(baseClassPath);

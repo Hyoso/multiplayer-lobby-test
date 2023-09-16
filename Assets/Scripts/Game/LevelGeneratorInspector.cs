@@ -18,6 +18,6 @@ public class LevelGeneratorInspector : MonoBehaviour
     [Button]
     public void Generate()
     {
-        m_generator.Generate();
+        m_generator.GenerateAsync();
     }
 }

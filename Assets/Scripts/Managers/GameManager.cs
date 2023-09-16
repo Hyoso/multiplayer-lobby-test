@@ -1,14 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
 	public Canvas canvas { get { return m_canvas; } set { } }
+    public PlayerController localPlayer { get { return m_networkPlayerController; } private set { } }
+
 
 	[SerializeField] private Canvas m_canvas;
     [SerializeField] private int m_levelOverride = -1;
     [SerializeField] private PlayerCamera m_playerCam;
+    [SerializeField, NaughtyAttributes.ReadOnly] private PlayerController m_networkPlayerController;
 
     private LevelRoot m_levelRoot;
     private int m_level;
@@ -70,6 +72,11 @@ public class GameManager : Singleton<GameManager>
     public void SetupPlayerCam(GameObject player)
     {
         m_playerCam.AssignPlayer(player);
+    }
+
+    public void RegisterLocalPlayer(PlayerController controller)
+    {
+        m_networkPlayerController = controller;
     }
 
     private void InitSaveData()

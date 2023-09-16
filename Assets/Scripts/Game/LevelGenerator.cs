@@ -32,6 +32,7 @@ public class LevelGenerator : NetworkBehaviour
     private const int MAX_ATTEMPTS = 99;
 
     [SerializeField] private NetworkVariable<int> m_seed = new NetworkVariable<int>();
+    [SerializeField] private NetworkVariable<bool> m_generated = new NetworkVariable<bool>();
     [SerializeField] private Vector3Int m_spawnOffset;
     [SerializeField] private int m_roomsToGenerate = 5;
     [SerializeField] private Bounds m_mapBounds;
@@ -45,22 +46,78 @@ public class LevelGenerator : NetworkBehaviour
     private int m_roomsCount;
     private int m_attemptsCounter;
 
-    private void Start()
+    private void Awake()
     {
+        GameplayEvents.GenerateNewLevelEvent += GameplayEvents_GenerateNewLevelEvent;
     }
 
-    public override async void OnNetworkSpawn()
+    public override void OnDestroy()
+    {
+        GameplayEvents.GenerateNewLevelEvent -= GameplayEvents_GenerateNewLevelEvent;
+
+        base.OnDestroy();
+    }
+
+    public override void OnNetworkSpawn()
     {
         SetupNetworkSettings();
 
+        if (m_generated.Value)
+        {
+            GenerateAsync();
+        }
+    }
+
+    private void GameplayEvents_GenerateNewLevelEvent()
+    {
+        if (!m_generated.Value && IsServer)
+        {
+            GenerateAsync();
+        }
+    }
+
+    //[ServerRpc]
+    //public void GenerateServerRpc()
+    //{
+    //    if (!IsServer && IsClient)
+    //    {
+    //        GenerateAsync();
+    //    }
+    //}
+
+    //[ClientRpc]
+    //public void GenerateClientRpc()
+    //{
+    //    if (IsServer)
+    //    {
+    //        GenerateAsync();
+    //    }
+    //}
+
+    [ClientRpc]
+    public void GenerateLevelOnOtherClientsClientRpc()
+    {
+        if (!IsServer && IsClient)
+        {
+            GenerateAsync();
+        }
+    }
+
+    public async void GenerateAsync()
+    {
         Random.InitState(m_seed.Value);
-        await Generate();
+        await GenerateInternal();
 
         Debug.Log("Seed: " + m_seed.Value);
     }
 
-    public async Task Generate()
+    private async Task GenerateInternal()
     {
+        if (IsServer)
+        {
+            m_generated.Value = true;
+        }
+
         if (m_currentDungeonMap)
         {
 #if UNITY_EDITOR
@@ -103,6 +160,8 @@ public class LevelGenerator : NetworkBehaviour
         // replace room entrance tiles
         ReplaceTiles(m_dungeonTilemap, m_generatedDungeonMap.roomEntranceCells, m_generatedDungeonMap.floorTile);
         await Task.Delay(50);
+
+        GenerateLevelOnOtherClientsClientRpc();
     }
 
 

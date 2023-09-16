@@ -156,6 +156,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
             }
             catch (AuthenticationException e)
             {
+                transition.CloseWindow();
                 Debug.LogException(e);
             }
 
@@ -167,6 +168,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
             }
             catch (RelayServiceException e)
             {
+                transition.CloseWindow();
                 Debug.Log(e);
             }
 

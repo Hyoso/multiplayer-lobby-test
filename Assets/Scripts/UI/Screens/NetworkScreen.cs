@@ -8,6 +8,7 @@ public class NetworkScreen : UIScreen
 {
     [SerializeField] private GameObject m_hostBtn;
     [SerializeField] private GameObject m_stopHostBtn;
+    [SerializeField] private Button m_interactWithNPCBtn;
 
     private void Awake()
     {
@@ -15,6 +16,8 @@ public class NetworkScreen : UIScreen
         GameplayEvents.onOnlineHostStopped += GameplayEvents_onOnlineHostStopped;
         GameplayEvents.onHostDisconnected += GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess += GameplayEvents_onJoinHost;
+
+        GameplayEvents.PlayerInNPCRangeEvent += GameplayEvents_PlayerInNPCRangeEvent;
     }
 
     private void OnDestroy()
@@ -23,6 +26,13 @@ public class NetworkScreen : UIScreen
         GameplayEvents.onOnlineHostStopped -= GameplayEvents_onOnlineHostStopped;
         GameplayEvents.onHostDisconnected -= GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess -= GameplayEvents_onJoinHost;
+
+        GameplayEvents.PlayerInNPCRangeEvent -= GameplayEvents_PlayerInNPCRangeEvent;
+    }
+
+    private void GameplayEvents_PlayerInNPCRangeEvent(bool inRange)
+    {
+        m_interactWithNPCBtn.interactable = inRange;
     }
 
     private void GameplayEvents_onHostDisconnected()
@@ -64,5 +74,15 @@ public class NetworkScreen : UIScreen
     public void StopHost()
     {
         GameNetworkManager.Instance.StopHost();
+    }
+
+    public void OnInteractNPCButtonDown()
+    {
+        GameplayEvents.SendInteractWithNPCEvent();
+    }
+
+    public void OnUseActiveSkillButtonDown()
+    {
+
     }
 }

@@ -90,4 +90,29 @@ public static partial class GameplayEvents
     {
         onPassiveTrinketEquipped?.Invoke(trinket);
     }
+
+	public static event BasicDelegate UseActiveSkillEvent;
+	public static void SendUseActiveSkillEvent()
+	{
+		UseActiveSkillEvent?.Invoke();
+	}
+
+	public static event BasicDelegate InteractWithNPCEvent;
+	public static void SendInteractWithNPCEvent()
+	{
+		InteractWithNPCEvent?.Invoke();
+    }
+
+
+    public static event BasicDelegate GenerateNewLevelEvent;
+	public static void SendGenerateNewLevelEvent()
+	{
+		GenerateNewLevelEvent?.Invoke();
+    }
+
+	public static event BoolDelegate PlayerInNPCRangeEvent;
+	public static void SendPlayerInNPCRangeEvent(bool inRange)
+	{
+		PlayerInNPCRangeEvent?.Invoke(inRange);
+	}
 }

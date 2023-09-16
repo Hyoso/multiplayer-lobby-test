@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,14 +20,14 @@ public class Popup : MonoBehaviour
         ShowWindow();
     }
 
-    public void ShowWindow()
+    public virtual void ShowWindow()
     {
         window.alpha = 1;
         window.interactable = true;
         window.blocksRaycasts = true;
     }
 
-    public void CloseWindow()
+    public virtual void CloseWindow()
     {
         window.alpha = 0;
         window.interactable = false;

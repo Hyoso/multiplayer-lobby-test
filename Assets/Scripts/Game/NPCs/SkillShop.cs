@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class TrinketShop : ShopBase
+public class SkillShop : ShopBase
 {
     [SerializeField] private TMPro.TextMeshPro m_levelText;
 
