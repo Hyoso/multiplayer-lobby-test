@@ -346,19 +346,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_animStates:
-  - animationName: idle
+  - animationName: IdleLeftBack
     isPositionRelative: 0
     overrideFirstPosition: 0
-  - animationName: run-left
+  - animationName: IdleLeftFront
     isPositionRelative: 0
     overrideFirstPosition: 0
-  - animationName: run-right
+  - animationName: IdleRightBack
     isPositionRelative: 0
     overrideFirstPosition: 0
-  - animationName: run-up
+  - animationName: IdleRightFront
     isPositionRelative: 0
     overrideFirstPosition: 0
-  - animationName: run-down
+  - animationName: RunLeftBack
+    isPositionRelative: 0
+    overrideFirstPosition: 0
+  - animationName: RunLeftFront
+    isPositionRelative: 0
+    overrideFirstPosition: 0
+  - animationName: RunRightBack
+    isPositionRelative: 0
+    overrideFirstPosition: 0
+  - animationName: RunRightFront
     isPositionRelative: 0
     overrideFirstPosition: 0
   m_animator: {fileID: -5810754716648337022}
