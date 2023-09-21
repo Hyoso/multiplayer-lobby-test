@@ -13,6 +13,7 @@ public class CharacterAnimations : NetworkBehaviour
         RIGHT
     }
 
+    // movement anims
     private const string ANIM_IDLE_LEFT_BACK = "IdleLeftBack";
     private const string ANIM_IDLE_LEFT_FRONT = "IdleLeftFront";
     private const string ANIM_IDLE_RIGHT_BACK = "IdleRightBack";
@@ -23,9 +24,16 @@ public class CharacterAnimations : NetworkBehaviour
     private const string ANIM_RUN_RIGHT_FRONT = "RunRightFront";
     private const string DEFAULT_ANIM = ANIM_IDLE_RIGHT_FRONT;
 
+    // attack anims
+    private const string ANIM_LOAD = "Load";
+    private const string ANIM_IDLE = "Idle";
+    private const string ANIM_SHOOT = "Shoot";
 
-    [SerializeField] private AnimationHelper m_animator;
-    
+
+
+    [SerializeField] private AnimationHelper m_movementAnimator;
+    [SerializeField] private AnimationHelper m_attackAnimator;
+
     private Rigidbody2D m_rigidbody;
     private MoveDirections m_verticalDir = MoveDirections.DOWN;
     private MoveDirections m_horizontalDir = MoveDirections.RIGHT;
@@ -35,7 +43,7 @@ public class CharacterAnimations : NetworkBehaviour
     private void Start()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
-        m_animator.PlayAnimation(DEFAULT_ANIM);
+        m_movementAnimator.PlayAnimation(DEFAULT_ANIM);
     }
 
     private void FixedUpdate()
@@ -45,28 +53,33 @@ public class CharacterAnimations : NetworkBehaviour
         if (m_rigidbody.velocity.magnitude > 0)
             UpdateMoveDirection();
 
-        UpdateAnimations();
+        UpdateMovementAnimations();
     }
 
-    private void UpdateAnimations()
+    public void Shoot(System.Action onFinishedAnim = null)
+    {
+        m_attackAnimator.PlayAnimation(ANIM_SHOOT, () =>  onFinishedAnim?.Invoke());
+    }
+
+    private void UpdateMovementAnimations()
     {
         if (m_rigidbody.velocity.magnitude > 0)
         {
             if (m_verticalDir == MoveDirections.DOWN && m_horizontalDir == MoveDirections.RIGHT)
             {
-                m_animator.PlayAnimation(ANIM_RUN_RIGHT_FRONT, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_RUN_RIGHT_FRONT, checkIsPlayingFirst: true);
             }
             else if (m_verticalDir == MoveDirections.DOWN && m_horizontalDir == MoveDirections.LEFT)
             {
-                m_animator.PlayAnimation(ANIM_RUN_LEFT_FRONT, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_RUN_LEFT_FRONT, checkIsPlayingFirst: true);
             }
             else if (m_verticalDir == MoveDirections.UP && m_horizontalDir == MoveDirections.RIGHT)
             {
-                m_animator.PlayAnimation(ANIM_RUN_RIGHT_BACK, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_RUN_RIGHT_BACK, checkIsPlayingFirst: true);
             }
             else if (m_verticalDir == MoveDirections.UP && m_horizontalDir == MoveDirections.LEFT)
             {
-                m_animator.PlayAnimation(ANIM_RUN_LEFT_BACK, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_RUN_LEFT_BACK, checkIsPlayingFirst: true);
             }
         }
         else
@@ -74,19 +87,19 @@ public class CharacterAnimations : NetworkBehaviour
             // idle
             if (m_verticalDir == MoveDirections.DOWN && m_horizontalDir == MoveDirections.RIGHT)
             {
-                m_animator.PlayAnimation(ANIM_IDLE_RIGHT_FRONT, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_IDLE_RIGHT_FRONT, checkIsPlayingFirst: true);
             }
             else if (m_verticalDir == MoveDirections.DOWN && m_horizontalDir == MoveDirections.LEFT)
             {
-                m_animator.PlayAnimation(ANIM_IDLE_LEFT_FRONT, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_IDLE_LEFT_FRONT, checkIsPlayingFirst: true);
             }
             else if (m_verticalDir == MoveDirections.UP && m_horizontalDir == MoveDirections.RIGHT)
             {
-                m_animator.PlayAnimation(ANIM_IDLE_RIGHT_BACK, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_IDLE_RIGHT_BACK, checkIsPlayingFirst: true);
             }
             else if (m_verticalDir == MoveDirections.UP && m_horizontalDir == MoveDirections.LEFT)
             {
-                m_animator.PlayAnimation(ANIM_IDLE_LEFT_BACK, checkIsPlayingFirst: true);
+                m_movementAnimator.PlayAnimation(ANIM_IDLE_LEFT_BACK, checkIsPlayingFirst: true);
             }
         }
     }

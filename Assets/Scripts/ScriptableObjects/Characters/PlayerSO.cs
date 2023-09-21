@@ -26,11 +26,35 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
 
     public override void UpdateMovement()
 	{
-		//m_characterObject.transform.position += Vector3.up * Time.deltaTime;
-	}
+        //m_characterObject.transform.position += Vector3.up * Time.deltaTime;
+        Vector3 dir = Vector3.zero;
+        if (Input.GetKey(KeyCode.W))
+        {
+            dir.y = maxSpeed;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            dir.y = -maxSpeed;
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            dir.x = -maxSpeed;
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            dir.x = maxSpeed;
+        }
+
+        Vector3 moveAmount = dir.normalized * maxSpeed;
+
+        m_rigidbody.velocity = moveAmount;
+    }
 
     public void OffsetControlChanged(Vector2 offset)
     {
+
+        return;
         Vector3 dir = new Vector3(offset.x, offset.y, 0f);
         Vector3 moveAmount = dir * speed;
         moveAmount = Vector3.ClampMagnitude(moveAmount, maxSpeed);
@@ -42,6 +66,7 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
 
     public void OffsetControlStopped()
     {
+        return;
         m_rigidbody.velocity = Vector3.zero;
     }
 

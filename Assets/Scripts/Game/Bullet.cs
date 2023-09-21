@@ -24,6 +24,6 @@ public class Bullet : NetworkBehaviour
 
     void Update()
     {
-        transform.position += Vector3.up * Time.deltaTime;
+        transform.position += transform.right * Time.deltaTime;
     }
 }

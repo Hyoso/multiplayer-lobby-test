@@ -60,6 +60,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_characterSO: {fileID: 11400000, guid: e36d2bee69d55504f9b7abe30eb621ce, type: 2}
   m_stats: {fileID: 1160743245825859308}
+  m_animations: {fileID: 2577066686566929327}
+  m_hand: {fileID: 364332111154205525}
 --- !u!114 &8155896888633642068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,7 +309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034164a4be03e6a4f99594b2ee585b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_animator: {fileID: 8261686773318809847}
+  m_movementAnimator: {fileID: 8261686773318809847}
+  m_attackAnimator: {fileID: 2083935930428650432}
 --- !u!95 &-5810754716648337022
 Animator:
   serializedVersion: 5
@@ -933,7 +936,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ebbff197c1a9b45abd508ff841317e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_animStates: []
+  m_animStates:
+  - animationName: Load
+    isPositionRelative: 0
+    overrideFirstPosition: 0
+  - animationName: Idle
+    isPositionRelative: 0
+    overrideFirstPosition: 0
+  - animationName: Shoot
+    isPositionRelative: 0
+    overrideFirstPosition: 0
   m_animator: {fileID: 4830799012243895492}
   m_useFirstFrameHack: 0
   m_continueAnimationOnEnable: 1

@@ -24,6 +24,8 @@ public class Character : NetworkBehaviour
 
 	[SerializeField] private PlayerSO m_characterSO;
     [SerializeField] private PlayerStatsController m_stats;
+    [SerializeField] private CharacterAnimations m_animations;
+    [SerializeField] private Transform m_hand;
 
 	private CharacterBaseSO m_characterController;
 
@@ -73,15 +75,14 @@ public class Character : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            m_randomNumber.Value = new CustomNetworkData
-            {
-                netInt = Random.Range(10, 100),
-                netStr = "string 2"
-            };
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            ShootBulletServerRPC();
+            m_animations.Shoot();
+            ShootServerRPC(transform.position, m_hand.eulerAngles);
+
+        //    m_randomNumber.Value = new CustomNetworkData
+        //    {
+        //        netInt = Random.Range(10, 100),
+        //        netStr = "string 2"
+        //    };
         }
 
         m_characterController.UpdateMovement();
@@ -93,11 +94,13 @@ public class Character : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void ShootBulletServerRPC()
+    private void ShootServerRPC(Vector3 pos, Vector3 rot)
     {
-        GameObject prefab = AssetsConfig.Instance.GetNetworkObjectWithName("Bullet");
+        GameObject prefab = AssetsConfig.Instance.GetNetworkObjectWithName("FeatherBullet");
         GameObject spawnedGo = Instantiate(prefab);
         spawnedGo.GetComponent<NetworkObject>().Spawn(true);
+        spawnedGo.transform.position = pos;
+        spawnedGo.transform.eulerAngles = rot;
     }
 
     // for server respawn after starting host
