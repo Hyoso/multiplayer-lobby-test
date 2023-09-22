@@ -25,7 +25,7 @@ public class Character : NetworkBehaviour
 	[SerializeField] private PlayerSO m_characterSO;
     [SerializeField] private PlayerStatsController m_stats;
     [SerializeField] private CharacterAnimations m_animations;
-    [SerializeField] private Transform m_hand;
+    [SerializeField] private PlayerHandController m_hand;
 
 	private CharacterBaseSO m_characterController;
 
@@ -76,7 +76,7 @@ public class Character : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             m_animations.Shoot();
-            ShootServerRPC(transform.position, m_hand.eulerAngles);
+            ShootServerRPC(m_hand.featherTransform.position, m_hand.featherTransform.parent.eulerAngles);
 
         //    m_randomNumber.Value = new CustomNetworkData
         //    {

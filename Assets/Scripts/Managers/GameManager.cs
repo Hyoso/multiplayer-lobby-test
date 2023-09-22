@@ -5,6 +5,7 @@ public class GameManager : Singleton<GameManager>
 {
 	public Canvas canvas { get { return m_canvas; } set { } }
     public PlayerController localPlayer { get { return m_networkPlayerController; } private set { } }
+    public PlayerCamera playerCam { get { return m_playerCam; } private set { } }
 
 
 	[SerializeField] private Canvas m_canvas;

@@ -177,7 +177,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_SortingOrder
-    path: Pivot/Hand/feather-default
+    path: Pivot/HandController/Hand/feather-default
     classID: 212
     script: {fileID: 0}
     flags: 0
@@ -245,7 +245,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3104020834
+      path: 1239748403
       attribute: 3762991556
       script: {fileID: 0}
       typeID: 212
@@ -715,7 +715,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_SortingOrder
-    path: Pivot/Hand/feather-default
+    path: Pivot/HandController/Hand/feather-default
     classID: 212
     script: {fileID: 0}
     flags: 0

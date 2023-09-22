@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
+    public CinemachineVirtualCamera mainCamera { get { return m_camera; } private set { } }
+
     [SerializeField] private CinemachineVirtualCamera m_camera;
     [SerializeField] private GameObject m_playerCharacter;
 
