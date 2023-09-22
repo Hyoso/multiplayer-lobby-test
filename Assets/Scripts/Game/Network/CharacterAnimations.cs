@@ -49,7 +49,7 @@ public class CharacterAnimations : NetworkBehaviour
         m_camera = GameManager.Instance.playerCam.GetComponent<Camera>();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (!IsOwner) return;
 

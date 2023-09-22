@@ -28,13 +28,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1279097843335853099}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.9297829, w: 0.3681084}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9297829, w: 0.3681084}
   m_LocalPosition: {x: -0.168, y: -0.255, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 364332111154205525}
-  m_Father: {fileID: 6522549889264666306}
+  m_Father: {fileID: 462353545879795495}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 136.802}
 --- !u!95 &2439929201913700397
 Animator:
@@ -154,6 +154,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 462353545879795495}
   - {fileID: 6522549889264666306}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -712,6 +713,38 @@ Transform:
   - {fileID: 5555976199460909864}
   m_Father: {fileID: 6522549889264666306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4950457081083613467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 462353545879795495}
+  m_Layer: 3
+  m_Name: HandPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &462353545879795495
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4950457081083613467}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7791430127496383106}
+  m_Father: {fileID: 8599920625821019732}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5176894558497621999
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,7 +1208,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7791430127496383106}
   - {fileID: 5701181037085968926}
   - {fileID: 7947218908219324079}
   - {fileID: 5688924867876749986}
