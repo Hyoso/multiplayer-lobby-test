@@ -24,6 +24,10 @@ public class PlayerHandController : MonoBehaviour
         Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
         Vector3 dirToMouse = m_handTransform.position - worldMousePos;
         dirToMouse = -dirToMouse.normalized;
+        if (transform.position.x > worldMousePos.x)
+        {
+            dirToMouse = -dirToMouse;
+        }
 
         m_handTransform.right = dirToMouse;
     }

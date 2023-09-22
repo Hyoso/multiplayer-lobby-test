@@ -39,18 +39,21 @@ public class CharacterAnimations : NetworkBehaviour
     private MoveDirections m_horizontalDir = MoveDirections.RIGHT;
     private MoveDirections m_lastVerticalDir = MoveDirections.DOWN;
     private MoveDirections m_lastHorizontalDir = MoveDirections.RIGHT;
+    
+    private Camera m_camera;
 
     private void Start()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_movementAnimator.PlayAnimation(DEFAULT_ANIM);
+        m_camera = GameManager.Instance.playerCam.GetComponent<Camera>();
     }
 
     private void FixedUpdate()
     {
         if (!IsOwner) return;
 
-        if (m_rigidbody.velocity.magnitude > 0)
+        //if (m_rigidbody.velocity.magnitude > 0)
             UpdateMoveDirection();
 
         UpdateMovementAnimations();
@@ -104,28 +107,64 @@ public class CharacterAnimations : NetworkBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = transform.position.z - m_camera.transform.position.z;
+        Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
+        Vector3 dirToMouse = transform.position - worldMousePos;
+        dirToMouse = -dirToMouse.normalized;
+
+        Debug.DrawLine(transform.position, transform.position + dirToMouse);
+    }
+
     private void UpdateMoveDirection()
     {
         m_verticalDir = m_lastVerticalDir;
         m_horizontalDir = m_lastHorizontalDir;
 
-        if (m_rigidbody.velocity.y < 0)
+        // todo: change this to target enemy
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = transform.position.z - m_camera.transform.position.z;
+        Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
+        Vector3 dirToMouse = transform.position - worldMousePos;
+        dirToMouse = -dirToMouse.normalized;
+
+        if (dirToMouse.y < 0)
         {
             m_verticalDir = MoveDirections.DOWN;
         }
-        else if (m_rigidbody.velocity.y > 0)
+        else
         {
             m_verticalDir = MoveDirections.UP;
         }
 
-        if (m_rigidbody.velocity.x < 0)
+        if (dirToMouse.x < 0)
         {
             m_horizontalDir = MoveDirections.LEFT;
         }
-        else if (m_rigidbody.velocity.x > 0)
+        else
         {
             m_horizontalDir = MoveDirections.RIGHT;
         }
+
+        //if (m_rigidbody.velocity.y < 0)
+        //{
+        //    m_verticalDir = MoveDirections.DOWN;
+        //}
+        //else if (m_rigidbody.velocity.y > 0)
+        //{
+        //    m_verticalDir = MoveDirections.UP;
+        //}
+
+        //if (m_rigidbody.velocity.x < 0)
+        //{
+        //    m_horizontalDir = MoveDirections.LEFT;
+        //}
+        //else if (m_rigidbody.velocity.x > 0)
+        //{
+        //    m_horizontalDir = MoveDirections.RIGHT;
+        //}
 
         m_lastVerticalDir = m_verticalDir;
         m_lastHorizontalDir = m_horizontalDir;

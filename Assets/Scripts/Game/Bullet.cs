@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class Bullet : NetworkBehaviour
 {
-    void Start()
-    {
-    }
+    [SerializeField] private float m_speed = 10f;
 
     public override void OnNetworkSpawn()
     {
@@ -24,6 +22,6 @@ public class Bullet : NetworkBehaviour
 
     void Update()
     {
-        transform.position += transform.right * Time.deltaTime;
+        transform.position += transform.right * Time.deltaTime * m_speed;
     }
 }

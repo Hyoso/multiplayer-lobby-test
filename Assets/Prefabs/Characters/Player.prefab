@@ -173,6 +173,7 @@ MonoBehaviour:
   m_stats: {fileID: 1160743245825859308}
   m_animations: {fileID: 2577066686566929327}
   m_hand: {fileID: 7384413777771561256}
+  m_pivot: {fileID: 6522549889264666306}
 --- !u!114 &8155896888633642068
 MonoBehaviour:
   m_ObjectHideFlags: 0
