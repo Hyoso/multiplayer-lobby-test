@@ -1,9 +1,10 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerHandController : MonoBehaviour
+public class PlayerHandController : NetworkBehaviour
 {
     public Transform featherTransform { get { return m_featherTransform; } private set { } }
 
@@ -19,16 +20,19 @@ public class PlayerHandController : MonoBehaviour
 
     private void Update()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = m_handTransform.position.z - m_camera.transform.position.z;
-        Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
-        Vector3 dirToMouse = m_handTransform.position - worldMousePos;
-        dirToMouse = -dirToMouse.normalized;
-        if (transform.position.x > worldMousePos.x)
+        if (IsOwner)
         {
-            dirToMouse = -dirToMouse;
-        }
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = m_handTransform.position.z - m_camera.transform.position.z;
+            Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
+            Vector3 dirToMouse = m_handTransform.position - worldMousePos;
+            dirToMouse = -dirToMouse.normalized;
+            if (transform.position.x > worldMousePos.x)
+            {
+                dirToMouse = -dirToMouse;
+            }
 
-        m_handTransform.right = dirToMouse;
+            m_handTransform.right = dirToMouse;
+        }
     }
 }
