@@ -23,6 +23,7 @@ public class GameNetworkSceneManager : NetworkSingleton<GameNetworkSceneManager>
     }
 #endif
 
+    public string SceneName { get { return m_SceneName; } private set { } }
     [SerializeField] private string m_SceneName;
 
     private Scene m_LoadedScene;

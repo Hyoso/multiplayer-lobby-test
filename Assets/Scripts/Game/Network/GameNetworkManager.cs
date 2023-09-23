@@ -128,7 +128,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
     {
         NetworkManager.Singleton.Shutdown();
 
-        ProjectSceneManager.Instance.UnloadScene("GameScene");
+        ProjectSceneManager.Instance.UnloadScene(GameNetworkSceneManager.Instance.SceneName);
 
         // restart offline gameplay sequence
         StartCoroutine(WaitAndReloadOfflineHost());
@@ -189,7 +189,7 @@ public class GameNetworkManager : Singleton<GameNetworkManager>
         {
             TransitionManager.Instance().pauseTransitionAtCutPoint = true;
             // server shutting down
-            ProjectSceneManager.Instance.UnloadScene("GameScene");
+            ProjectSceneManager.Instance.UnloadScene(GameNetworkSceneManager.Instance.SceneName);
 
             await AsyncTaskUtils.WaitUntil(() => !NetworkManager.Singleton.ShutdownInProgress);
             
