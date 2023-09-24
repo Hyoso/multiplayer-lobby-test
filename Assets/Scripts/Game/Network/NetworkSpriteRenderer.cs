@@ -45,6 +45,10 @@ public class NetworkSpriteRenderer : NetworkBehaviour
         }
     }
 
+    public void ChangeRenderEnabled(bool renderEnabled)
+    {
+        m_render.Value = renderEnabled;
+    }
 
     private void SetupVariables()
     {
