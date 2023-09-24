@@ -22,7 +22,7 @@ public class PlayerHandController : NetworkBehaviour
     {
         if (IsOwner)
         {
-            TargetBase closestTarget = TargetsManager.Instance.GetNearestTarget(transform.position);
+            TargetBase closestTarget = TargetsManager.Instance.currentTarget;
             Vector3 targetPosition;
             if (closestTarget == null)
             {

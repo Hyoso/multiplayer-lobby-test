@@ -107,23 +107,12 @@ public class CharacterAnimations : NetworkBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = transform.position.z - m_camera.transform.position.z;
-        Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
-        Vector3 dirToMouse = transform.position - worldMousePos;
-        dirToMouse = -dirToMouse.normalized;
-
-        Debug.DrawLine(transform.position, transform.position + dirToMouse);
-    }
-
     private void UpdateMoveDirection()
     {
         m_verticalDir = m_lastVerticalDir;
         m_horizontalDir = m_lastHorizontalDir;
 
-        TargetBase closestTarget = TargetsManager.Instance.GetNearestTarget(transform.position);
+        TargetBase closestTarget = TargetsManager.Instance.currentTarget;
         Vector3 targetPosition;
         if (closestTarget == null)
         {

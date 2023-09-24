@@ -131,6 +131,7 @@ public class Character : NetworkBehaviour
         if (IsOwner)
         {
             GameManager.Instance.SetupPlayerCam(this.gameObject);
+            TargetsManager.Instance.RegisterPlayerTransform(this.transform);
         }
     }
 

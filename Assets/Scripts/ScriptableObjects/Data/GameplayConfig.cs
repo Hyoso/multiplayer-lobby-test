@@ -5,16 +5,13 @@ using UnityEngine;
 [CreateAssetMenu]
 public class GameplayConfig : GenericConfig<GameplayConfig>
 {
-	public float testFloat;
-
-	// game
+	[Header("Game")]
 	public float gameFinishCooldown = 1f;
 	
-	// move this to ads config later
+	[Header("Ads")]
 	public int minAdFrequency = 3;
-	public int maxAdFrequency = 5;
+    public int maxAdFrequency = 5;
 
-	// ball spawning
-	public float ballSpawnRadius = 2f;
-	public float ballSpawnFrequency = 0.05f;
+	[Header("Target System")]
+	public float retargetCooldown = 3f;
 }
