@@ -22,12 +22,25 @@ public class PlayerHandController : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.z = m_handTransform.position.z - m_camera.transform.position.z;
-            Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
-            Vector3 dirToMouse = m_handTransform.position - worldMousePos;
+            TargetBase closestTarget = TargetsManager.Instance.GetNearestTarget(transform.position);
+            Vector3 targetPosition;
+            if (closestTarget == null)
+            {
+                targetPosition = transform.position + Vector3.right;
+            }
+            else
+            {
+                targetPosition = closestTarget.position;
+            }
+
+            // target as mouse pos
+            //Vector3 mousePos = Input.mousePosition;
+            //mousePos.z = m_handTransform.position.z - m_camera.transform.position.z;
+            //targetPosition = m_camera.ScreenToWorldPoint(mousePos);
+
+            Vector3 dirToMouse = m_handTransform.position - targetPosition;
             dirToMouse = -dirToMouse.normalized;
-            if (transform.position.x > worldMousePos.x)
+            if (transform.position.x > targetPosition.x)
             {
                 dirToMouse = -dirToMouse;
             }

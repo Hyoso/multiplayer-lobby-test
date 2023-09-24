@@ -123,14 +123,26 @@ public class CharacterAnimations : NetworkBehaviour
         m_verticalDir = m_lastVerticalDir;
         m_horizontalDir = m_lastHorizontalDir;
 
-        // todo: change this to target enemy
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = transform.position.z - m_camera.transform.position.z;
-        Vector3 worldMousePos = m_camera.ScreenToWorldPoint(mousePos);
-        Vector3 dirToMouse = transform.position - worldMousePos;
-        dirToMouse = -dirToMouse.normalized;
+        TargetBase closestTarget = TargetsManager.Instance.GetNearestTarget(transform.position);
+        Vector3 targetPosition;
+        if (closestTarget == null)
+        {
+            targetPosition = transform.position + Vector3.right;
+        }
+        else
+        {
+            targetPosition = closestTarget.position;
+        }
 
-        if (dirToMouse.y < 0)
+        // target as mouse pos
+        //Vector3 mousePos = Input.mousePosition;
+        //mousePos.z = transform.position.z - m_camera.transform.position.z;
+        //targetPosition = m_camera.ScreenToWorldPoint(mousePos);
+
+        Vector3 dirToTarget = transform.position - targetPosition;
+        dirToTarget = -dirToTarget.normalized;
+
+        if (dirToTarget.y < 0)
         {
             m_verticalDir = MoveDirections.DOWN;
         }
@@ -139,7 +151,7 @@ public class CharacterAnimations : NetworkBehaviour
             m_verticalDir = MoveDirections.UP;
         }
 
-        if (dirToMouse.x < 0)
+        if (dirToTarget.x < 0)
         {
             m_horizontalDir = MoveDirections.LEFT;
         }
