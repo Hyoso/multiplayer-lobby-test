@@ -19,6 +19,13 @@ public abstract class TargetBase : NetworkBehaviour
         TargetsManager.Instance.RegisterTarget(this);
     }
 
+    public override void OnDestroy()
+    {
+        TargetsManager.Instance.UnRegisterTarget(this);
+
+        base.OnDestroy();
+    }
+
     public override void OnNetworkSpawn()
     {
     }
@@ -37,6 +44,10 @@ public abstract class TargetBase : NetworkBehaviour
         if (m_spriteRenderer == null)
         {
             m_spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+            if (m_spriteRenderer == null)
+            {
+                m_spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
+            }
         }
     }
 

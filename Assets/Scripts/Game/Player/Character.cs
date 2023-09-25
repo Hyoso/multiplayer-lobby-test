@@ -22,6 +22,8 @@ public class Character : NetworkBehaviour
         }
     }
 
+    public Vector3 position { get { return transform.position; } }
+
 	[SerializeField] private PlayerSO m_characterSO;
     [SerializeField] private PlayerStatsController m_stats;
     [SerializeField] private CharacterAnimations m_animations;
@@ -44,7 +46,7 @@ public class Character : NetworkBehaviour
 
     private void Start()
     {
-        //m_connectionHandler.SetClientPlayerPrefab(0);
+        PlayerObjectsManager.Instance.RegisterPlayerObject(this);
     }
 
     public override void OnNetworkSpawn()
@@ -98,6 +100,8 @@ public class Character : NetworkBehaviour
     public override void OnDestroy()
     {
         base.OnDestroy();
+
+        PlayerObjectsManager.Instance.UnRegisterPlayerObject(this);
     }
 
     [ServerRpc]

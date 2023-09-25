@@ -34,6 +34,14 @@ public class TargetsManager : Singleton<TargetsManager>
         m_targets.Add(target);
     }
 
+    public void UnRegisterTarget(TargetBase target)
+    {
+        if (m_targets.Contains(target))
+        {
+            m_targets.Remove(target);
+        }
+    }
+
     public void RegisterPlayerTransform(Transform player)
     {
         m_playerTransform = player;
