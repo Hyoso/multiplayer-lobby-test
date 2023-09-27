@@ -14,5 +14,6 @@ public abstract class StateMachineBehaviour
 
     public abstract void OnStateEnter();
     public abstract void OnStateUpdate();
+    public abstract void OnStateFixedUpdate();
     public abstract void OnStateExit();
 }

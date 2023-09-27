@@ -24,7 +24,18 @@ public class BasicCrabEnemy : TargetBase
 
     private void Update()
     {
-        m_stateMachine.UpdateMachine();
+        if (IsServer)
+        {
+            m_stateMachine.UpdateMachine();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (IsServer)
+        {
+            m_stateMachine.FixedUpdateMachine();
+        }
     }
 
     private void SetupStateMachine()

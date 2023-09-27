@@ -37,12 +37,17 @@ public class ChaseState : StateMachineBehaviour
 
     public override void OnStateUpdate()
     {
+    }
+
+    public override void OnStateFixedUpdate()
+    {
         if (m_target)
         {
-            Vector3 dirToTarget = m_target.position-  m_transform.position;
+            Vector3 dirToTarget = m_target.position - m_transform.position;
             dirToTarget = dirToTarget.normalized;
 
-            m_rigidbody.velocity = dirToTarget * Time.deltaTime * speed;
+            Vector2 moveAmount = dirToTarget * speed * Time.deltaTime;
+            m_rigidbody.MovePosition(m_rigidbody.position + moveAmount);
         }
     }
 

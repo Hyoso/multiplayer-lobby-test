@@ -94,6 +94,13 @@ public class Character : NetworkBehaviour
         //    };
         }
 
+    }
+
+    private void FixedUpdate()
+    {
+        if (!IsOwner)
+            return;
+
         m_characterController.UpdateMovement();
     }
 

@@ -12,6 +12,10 @@ public class IdleState : StateMachineBehaviour
     {
     }
 
+    public override void OnStateFixedUpdate()
+    {
+    }
+
     public override void OnStateUpdate()
     {
     }

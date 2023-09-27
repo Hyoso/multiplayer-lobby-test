@@ -35,6 +35,7 @@ public class CharacterAnimations : NetworkBehaviour
     [SerializeField] private AnimationHelper m_attackAnimator;
 
     private Rigidbody2D m_rigidbody;
+    private Vector2 m_lastPosition;
     private MoveDirections m_verticalDir = MoveDirections.DOWN;
     private MoveDirections m_horizontalDir = MoveDirections.RIGHT;
     private MoveDirections m_lastVerticalDir = MoveDirections.DOWN;
@@ -49,12 +50,11 @@ public class CharacterAnimations : NetworkBehaviour
         m_camera = GameManager.Instance.playerCam.GetComponent<Camera>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (!IsOwner) return;
 
-        //if (m_rigidbody.velocity.magnitude > 0)
-            UpdateMoveDirection();
+        UpdateMoveDirection();
 
         UpdateMovementAnimations();
     }
@@ -66,7 +66,9 @@ public class CharacterAnimations : NetworkBehaviour
 
     private void UpdateMovementAnimations()
     {
-        if (m_rigidbody.velocity.magnitude > 0)
+        Vector2 movedAmount = m_lastPosition - m_rigidbody.position;
+
+        if (movedAmount.magnitude > 0)
         {
             if (m_verticalDir == MoveDirections.DOWN && m_horizontalDir == MoveDirections.RIGHT)
             {
@@ -105,6 +107,8 @@ public class CharacterAnimations : NetworkBehaviour
                 m_movementAnimator.PlayAnimation(ANIM_IDLE_LEFT_BACK, checkIsPlayingFirst: true);
             }
         }
+
+        m_lastPosition = m_rigidbody.position;
     }
 
     private void UpdateMoveDirection()

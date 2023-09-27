@@ -20,6 +20,11 @@ public class StateMachine : NetworkBehaviour
         m_currentState?.OnStateUpdate();
     }
 
+    public virtual void FixedUpdateMachine()
+    {
+        m_currentState?.OnStateFixedUpdate();
+    }
+
     public virtual void AddState(int stateId, StateMachineBehaviour state)
     {
         if (m_stateMachineBehaviours.ContainsKey(stateId))
