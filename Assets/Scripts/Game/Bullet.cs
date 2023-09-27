@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class Bullet : NetworkBehaviour
 {
+    public float damage { get { return m_damage; } }
+
+    [SerializeField] private float m_damage = 2f;
     [SerializeField] private float m_speed = 10f;
     [SerializeField] private NetworkSpriteRenderer m_feather;
     [SerializeField] private NetworkTransform m_networkTransform;
@@ -31,6 +34,12 @@ public class Bullet : NetworkBehaviour
                 m_feather.ChangeRenderEnabled(true);
             }));
         }
+    }
+
+    public void HitEnemy(Transform enemy)
+    {
+        NetworkObject netObj = GetComponent<NetworkObject>();
+        netObj.Despawn(true);
     }
 
     private void Update()

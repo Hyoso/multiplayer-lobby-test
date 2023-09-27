@@ -12,7 +12,7 @@ public abstract class TargetBase : NetworkBehaviour
     public bool isAlive { get { return m_health.Value > 0; } }
 
     [SerializeField] private SpriteRenderer m_spriteRenderer;
-    [SerializeField, ReadOnly] protected NetworkVariable<float> m_health = new NetworkVariable<float>(100f);
+    [SerializeField, ReadOnly] protected NetworkVariable<float> m_health = new NetworkVariable<float>(5f);
 
     public virtual void Start()
     {

@@ -1,12 +1,12 @@
 using NaughtyAttributes;
 using System;
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(BasicStateMachine))]
 public class BasicCrabEnemy : TargetBase
 {
-
     [SerializeField] private AnimationHelper m_animator;
     [SerializeField] private Rigidbody2D m_rigidbody2D;
     [SerializeField] private BasicStateMachine m_stateMachine;
@@ -20,6 +20,8 @@ public class BasicCrabEnemy : TargetBase
 
     protected override void PlayDeathSequence()
     {
+        NetworkObject netObj = GetComponent<NetworkObject>();
+        netObj.Despawn(true);
     }
 
     private void Update()
@@ -35,6 +37,22 @@ public class BasicCrabEnemy : TargetBase
         if (IsServer)
         {
             m_stateMachine.FixedUpdateMachine();
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (IsServer)
+        {
+            if (collision.CompareTag(Tags.PlayerBullet))
+            {
+                Debug.Log("Feather hit");
+                
+                Bullet bullet = collision.GetComponent<Bullet>();
+                TakeDamage(bullet.damage);
+
+                bullet.HitEnemy(transform);
+            }
         }
     }
 
