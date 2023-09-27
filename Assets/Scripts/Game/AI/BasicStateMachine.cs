@@ -10,10 +10,17 @@ public class BasicStateMachine : StateMachine
         CHASE,
     }
 
+    private const string ANIM_WALK_LEFT_FRONT = "WalkLeftFront";
+    private const string ANIM_WALK_RIGHT_FRONT = "WalkRightFront";
+    private const string ANIM_IDLE_LEFT = "IdleLeft";
+    private const string ANIM_IDLE_RIGHT = "IdleRight";
+
     private Rigidbody2D m_rigidbody;
     private Transform m_currentTargetTransform;
     private float m_checkPlayerInRangeTimer;
     private bool m_facingRight = true;
+
+    private ChaseState m_chaseState;
 
     public override void Setup(AnimationHelper animator)
     {
@@ -31,25 +38,67 @@ public class BasicStateMachine : StateMachine
 
         base.UpdateMachine();
 
-        if (m_currentTargetTransform != null)
-        {
-            m_checkPlayerInRangeTimer -= Time.deltaTime;
-            if (m_checkPlayerInRangeTimer <= 0f)
-            {
-                m_currentTargetTransform = PlayerObjectsManager.Instance.GetClosestPlayerToPoint(transform.position);
-                m_checkPlayerInRangeTimer = GameplayConfig.Instance.checklayerInRangeCooldown;
-            }
-        }
+        CheckPlayerInRange(); 
 
+        // check if player in range, if not then idle
+        if (m_currentTargetTransform == null)
+        {
+            SetState((int)States.IDLE);
+        }
+        else
+        {
+            // player in range, chase player
+            SetState((int)States.CHASE);
+            m_chaseState.SetTarget(m_currentTargetTransform);
+        }
     }
 
     public override void SetState(int stateId)
     {
-        base.SetState(stateId);
-
         if (stateId == (int)States.IDLE)
         {
+            if (m_facingRight)
+            {
+                m_animator.PlayAnimation(ANIM_IDLE_RIGHT, checkIsPlayingFirst: true);
+            }
+            else
+            {
+                m_animator.PlayAnimation(ANIM_IDLE_LEFT, checkIsPlayingFirst: true);
+            }
+        }
+        else if (stateId == (int)States.CHASE)
+        {
+            if (m_facingRight)
+            {
+                m_animator.PlayAnimation(ANIM_WALK_RIGHT_FRONT, checkIsPlayingFirst: true);
+            }
+            else
+            {
+                m_animator.PlayAnimation(ANIM_WALK_LEFT_FRONT, checkIsPlayingFirst: true);
+            }
+        }
 
+        base.SetState(stateId);
+    }
+
+    public override void AddState(int stateId, StateMachineBehaviour state)
+    {
+        base.AddState(stateId, state);
+
+        if (state is ChaseState)
+        {
+            m_chaseState = (ChaseState)state;
+            m_chaseState.SetTransform(this.transform);
+        }
+    }
+
+    private void CheckPlayerInRange()
+    {
+        m_checkPlayerInRangeTimer -= Time.deltaTime;
+        if (m_checkPlayerInRangeTimer <= 0f)
+        {
+            m_currentTargetTransform = PlayerObjectsManager.Instance.GetClosestPlayerToPoint(transform.position);
+            m_checkPlayerInRangeTimer = GameplayConfig.Instance.checklayerInRangeCooldown;
         }
     }
 }

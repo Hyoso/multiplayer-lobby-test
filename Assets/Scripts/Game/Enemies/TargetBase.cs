@@ -14,7 +14,7 @@ public abstract class TargetBase : NetworkBehaviour
     [SerializeField] private SpriteRenderer m_spriteRenderer;
     [SerializeField, ReadOnly] protected NetworkVariable<float> m_health = new NetworkVariable<float>(100f);
 
-    private void Start()
+    public virtual void Start()
     {
         TargetsManager.Instance.RegisterTarget(this);
     }

@@ -7,6 +7,7 @@ public class StateMachine : NetworkBehaviour
 {
     protected Dictionary<int, StateMachineBehaviour> m_stateMachineBehaviours = new Dictionary<int, StateMachineBehaviour>();
     protected StateMachineBehaviour m_currentState;
+    protected int m_currentStateIndex;
     protected AnimationHelper m_animator;
 
     public virtual void Setup(AnimationHelper animator)
@@ -32,14 +33,20 @@ public class StateMachine : NetworkBehaviour
 
     public virtual void SetState(int stateId)
     {
-        if (m_stateMachineBehaviours.ContainsKey(stateId))
+        if (!m_stateMachineBehaviours.ContainsKey(stateId))
         {
             Debug.LogError("State does not exist");
             return;
         }
 
+        if (stateId == m_currentStateIndex)
+        {
+            return;
+        }
+
         m_currentState?.OnStateExit();
 
+        m_currentStateIndex = stateId;
         m_currentState = m_stateMachineBehaviours[stateId];
 
         m_currentState?.OnStateEnter();
