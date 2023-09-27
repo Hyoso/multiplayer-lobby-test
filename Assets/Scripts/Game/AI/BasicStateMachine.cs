@@ -15,6 +15,9 @@ public class BasicStateMachine : StateMachine
     private const string ANIM_IDLE_LEFT = "IdleLeft";
     private const string ANIM_IDLE_RIGHT = "IdleRight";
 
+    [SerializeField] private float m_range = 3f;
+    [SerializeField] private float m_speed = 420f;
+
     private Rigidbody2D m_rigidbody;
     private Transform m_currentTargetTransform;
     private float m_checkPlayerInRangeTimer;
@@ -89,6 +92,7 @@ public class BasicStateMachine : StateMachine
         {
             m_chaseState = (ChaseState)state;
             m_chaseState.SetTransform(this.transform);
+            m_chaseState.speed = m_speed;
         }
     }
 
@@ -97,7 +101,7 @@ public class BasicStateMachine : StateMachine
         m_checkPlayerInRangeTimer -= Time.deltaTime;
         if (m_checkPlayerInRangeTimer <= 0f)
         {
-            m_currentTargetTransform = PlayerObjectsManager.Instance.GetClosestPlayerToPoint(transform.position);
+            m_currentTargetTransform = PlayerObjectsManager.Instance.GetClosestPlayerToPoint(transform.position, m_range);
             m_checkPlayerInRangeTimer = GameplayConfig.Instance.checklayerInRangeCooldown;
         }
     }

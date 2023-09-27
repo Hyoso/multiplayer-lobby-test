@@ -11,8 +11,6 @@ public class BasicCrabEnemy : TargetBase
     [SerializeField] private Rigidbody2D m_rigidbody2D;
     [SerializeField] private BasicStateMachine m_stateMachine;
     
-
-
     public override void Start()
     {
         SetupStateMachine();

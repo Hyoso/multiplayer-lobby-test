@@ -46,7 +46,7 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
             dir.x = maxSpeed;
         }
 
-        Vector3 moveAmount = dir.normalized * maxSpeed;
+        Vector3 moveAmount = dir.normalized * maxSpeed * Time.deltaTime;
 
         m_rigidbody.velocity = moveAmount;
     }
