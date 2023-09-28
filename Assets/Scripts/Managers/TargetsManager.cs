@@ -69,7 +69,6 @@ public class TargetsManager : Singleton<TargetsManager>
     {
         if (m_targets.Count == 0)
         {
-            Debug.LogWarning("The objectPositions list is empty.");
             return null;
         }
 

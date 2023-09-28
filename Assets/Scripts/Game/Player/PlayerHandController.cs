@@ -6,12 +6,14 @@ using UnityEngine;
 
 public class PlayerHandController : NetworkBehaviour
 {
+    public bool hasTarget { get { return m_hasTarget; } }
     public Transform featherTransform { get { return m_featherTransform; } private set { } }
 
     [SerializeField] private Transform m_handTransform;
     [SerializeField] private Transform m_featherTransform;
 
     private Camera m_camera;
+    private bool m_hasTarget;
 
     private void Start()
     {
@@ -32,6 +34,8 @@ public class PlayerHandController : NetworkBehaviour
             {
                 targetPosition = closestTarget.position;
             }
+
+            m_hasTarget = closestTarget != null;
 
             // target as mouse pos
             //Vector3 mousePos = Input.mousePosition;

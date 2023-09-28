@@ -30,7 +30,8 @@ public class Character : NetworkBehaviour
     [SerializeField] private PlayerHandController m_hand;
     [SerializeField] private Transform m_pivot;
 
-	private CharacterBaseSO m_characterController;
+	private PlayerSO m_characterController;
+    private float m_attackCooldown;
 
 	private NetworkVariable<CustomNetworkData> m_randomNumber =  new NetworkVariable<CustomNetworkData>(
         new CustomNetworkData
@@ -78,22 +79,19 @@ public class Character : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            m_animations.Shoot();
-            Vector3 shootAngle = m_hand.featherTransform.parent.eulerAngles;
-            if (m_pivot.localScale.x < 0f)
-            {
-                shootAngle.z += 180f;
-            }
-
-            ShootServerRPC(m_hand.featherTransform.position, shootAngle);
-
-        //    m_randomNumber.Value = new CustomNetworkData
-        //    {
-        //        netInt = Random.Range(10, 100),
-        //        netStr = "string 2"
-        //    };
+            Shoot();
         }
 
+        if (m_hand.hasTarget)
+        {
+            m_attackCooldown -= Time.deltaTime;
+            if (m_attackCooldown <= 0)
+            {
+                Shoot();
+                float cooldown = GetAttackSpeed();
+                m_attackCooldown = cooldown;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -152,5 +150,29 @@ public class Character : NetworkBehaviour
         m_characterController.SetCharacterObject(this.gameObject);
 
         m_characterController.Init();
+    }
+
+    private void Shoot()
+    {
+        m_animations.Shoot();
+        Vector3 shootAngle = m_hand.featherTransform.parent.eulerAngles;
+        if (m_pivot.localScale.x < 0f)
+        {
+            shootAngle.z += 180f;
+        }
+
+        ShootServerRPC(m_hand.featherTransform.position, shootAngle);
+    }
+
+    private float GetAttackSpeed()
+    {
+        /// formula
+        /// Cooldown = Base Attack Time ÷ (1 + (Increased Attack Speed ÷ 100)) = Attack Speed
+
+        float attackSpeed = m_stats.GetSkillValue(PlayerStats.StatType.ATTACK_SPEED);
+        float baseAttackSpeed = m_characterSO.baseStats.GetStat(PlayerStats.StatType.ATTACK_SPEED);
+
+        float cooldown = baseAttackSpeed / (1 + attackSpeed * 0.01f);
+        return cooldown;
     }
 }

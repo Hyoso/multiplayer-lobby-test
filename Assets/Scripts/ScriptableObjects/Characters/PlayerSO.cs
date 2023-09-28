@@ -7,6 +7,7 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
 {
     public float speed = 1f;
     public float maxSpeed = 0.5f;
+    public PlayerStats baseStats;
 
     private OffsetInput m_offsetInput;
     private Rigidbody2D m_rigidbody;

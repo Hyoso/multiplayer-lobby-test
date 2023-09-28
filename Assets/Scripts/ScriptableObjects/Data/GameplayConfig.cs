@@ -7,6 +7,7 @@ public class GameplayConfig : GenericConfig<GameplayConfig>
 {
 	[Header("Game")]
 	public float gameFinishCooldown = 1f;
+	public PlayerStats maxPlayerStats;
 	
 	[Header("Ads")]
 	public int minAdFrequency = 3;

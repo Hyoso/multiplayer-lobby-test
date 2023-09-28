@@ -40,6 +40,9 @@ public class CharacterAnimations : NetworkBehaviour
     private MoveDirections m_horizontalDir = MoveDirections.RIGHT;
     private MoveDirections m_lastVerticalDir = MoveDirections.DOWN;
     private MoveDirections m_lastHorizontalDir = MoveDirections.RIGHT;
+
+    private MoveDirections m_inputVerticalDir = MoveDirections.DOWN;
+    private MoveDirections m_inputHorizontalDir = MoveDirections.RIGHT;
     
     private Camera m_camera;
 
@@ -48,6 +51,26 @@ public class CharacterAnimations : NetworkBehaviour
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_movementAnimator.PlayAnimation(DEFAULT_ANIM);
         m_camera = GameManager.Instance.playerCam.GetComponent<Camera>();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            m_inputVerticalDir = MoveDirections.UP;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            m_inputVerticalDir = MoveDirections.DOWN;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            m_inputHorizontalDir = MoveDirections.RIGHT;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            m_inputHorizontalDir = MoveDirections.LEFT;
+        }
     }
 
     private void FixedUpdate()
@@ -120,7 +143,26 @@ public class CharacterAnimations : NetworkBehaviour
         Vector3 targetPosition;
         if (closestTarget == null)
         {
-            targetPosition = transform.position + Vector3.right;
+            Vector3 viewDir = Vector3.zero;
+            if (m_inputHorizontalDir == MoveDirections.LEFT)
+            {
+                viewDir += Vector3.left;
+            }
+            else if (m_inputHorizontalDir == MoveDirections.RIGHT)
+            {
+                viewDir += Vector3.right;
+            }
+
+            if (m_inputVerticalDir == MoveDirections.UP)
+            {
+                viewDir += Vector3.up;
+            }
+            else if (m_inputVerticalDir == MoveDirections.DOWN)
+            {
+                viewDir += Vector3.down;
+            }
+
+            targetPosition = transform.position + viewDir;
         }
         else
         {

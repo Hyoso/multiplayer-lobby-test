@@ -14,3 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 100
   maxSpeed: 5.2
+  baseStats:
+    health: 0
+    damage: 0
+    range: 0
+    attackSpeed: 1
+    moveSpeed: 0
+    luck: 0

@@ -46,8 +46,6 @@ public class BasicCrabEnemy : TargetBase
         {
             if (collision.CompareTag(Tags.PlayerBullet))
             {
-                Debug.Log("Feather hit");
-                
                 Bullet bullet = collision.GetComponent<Bullet>();
                 TakeDamage(bullet.damage);
 

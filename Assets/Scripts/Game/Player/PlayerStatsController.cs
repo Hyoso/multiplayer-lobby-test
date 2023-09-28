@@ -14,6 +14,7 @@ public class PlayerStatsController : NetworkBehaviour
     private List<CosmeticSO> m_cosmetics = new List<CosmeticSO>();
 
     private CharacterDisplay m_characterDisplay;
+    private PlayerStats m_baseStats;
 
     private void Awake()
     {
@@ -58,6 +59,11 @@ public class PlayerStatsController : NetworkBehaviour
         GameplayEvents.onPassiveTrinketEquipped -= GameplayEvents_onPassiveTrinketEquipped;
 
         base.OnDestroy();
+    }
+
+    public void SetBaseStats(PlayerStats baseStats)
+    {
+        m_baseStats = baseStats;
     }
 
     public void RegisterCharacterDisplay(CharacterDisplay characterDisplay)
@@ -114,11 +120,14 @@ public class PlayerStatsController : NetworkBehaviour
 
     public float GetSkillValue(PlayerStats.StatType type)
     {
-        float total = 0;
+        float total = m_baseStats.GetStat(type);
         foreach (var item in m_passiveTrinkets)
         {
             total += item.boostToPlayerStats.GetStat(type);
         }
+
+        float maxStat = GameplayConfig.Instance.maxPlayerStats.GetStat(type);
+        total = Mathf.Min(total, total, maxStat);
 
         return total;
     }
