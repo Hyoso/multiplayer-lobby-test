@@ -44,7 +44,7 @@ public class BasicCrabEnemy : TargetBase
     {
         if (IsServer)
         {
-            if (collision.CompareTag(Tags.PlayerBullet))
+            if (m_health.Value > 0 && collision.CompareTag(Tags.PlayerBullet))
             {
                 Bullet bullet = collision.GetComponent<Bullet>();
                 TakeDamage(bullet.damage);

@@ -88,8 +88,7 @@ public class Character : NetworkBehaviour
             if (m_attackCooldown <= 0)
             {
                 Shoot();
-                float cooldown = GetAttackSpeed();
-                m_attackCooldown = cooldown;
+                m_attackCooldown = GetAttackSpeed();
             }
         }
     }

@@ -14,6 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Stone Boots
   icon: {fileID: 21300000, guid: 05ecba458c601454c8b686c3ef0b3ba7, type: 3}
+  boostToPlayerStats:
+    health: 0
+    damage: 0
+    range: 0
+    attackSpeed: 10
+    moveSpeed: 0
+    luck: 0
   requirements: []
   cosmetics:
   - {fileID: 11400000, guid: 44609f5d477350741b53a9a5b96c5515, type: 2}

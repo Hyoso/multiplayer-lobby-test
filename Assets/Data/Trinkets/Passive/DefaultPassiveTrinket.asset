@@ -14,6 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Default Passive Trinket
   icon: {fileID: 1152922866, guid: 1eac61c1733f3384ca593f49b87ecf5f, type: 3}
+  boostToPlayerStats:
+    health: 0
+    damage: 0
+    range: 0
+    attackSpeed: 3000
+    moveSpeed: 0
+    luck: 0
   requirements: []
   cosmetics:
   - {fileID: 11400000, guid: 44609f5d477350741b53a9a5b96c5515, type: 2}

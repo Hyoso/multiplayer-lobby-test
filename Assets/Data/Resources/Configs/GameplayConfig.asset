@@ -12,4 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f50d47eb06dc30d418b6a97b655e2296, type: 3}
   m_Name: GameplayConfig
   m_EditorClassIdentifier: 
-  testFloat: 0
+  gameFinishCooldown: 1
+  maxPlayerStats:
+    health: 100
+    damage: 10
+    range: 10
+    attackSpeed: 500
+    moveSpeed: 10
+    luck: 100
+  minAdFrequency: 3
+  maxAdFrequency: 5
+  retargetCooldown: 3
+  checklayerInRangeCooldown: 0.1
