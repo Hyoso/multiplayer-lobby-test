@@ -71,6 +71,7 @@ public class WavesManager : NetworkSingleton<WavesManager>
     private void Update()
     {
         if (!IsServer) return;
+        if (!IsSpawned) return;
 
         if (m_state == WaveState.SPAWNING)
         {

@@ -70,7 +70,10 @@ public class BasicCrabEnemy : TargetBase
 
     private void GameplayEvents_WaveFailedEvent()
     {
-        PlayDeathSequence();
+        if (IsServer)
+        {
+            PlayDeathSequence();
+        }
     }
 
     private void SetupStateMachine()
