@@ -1241,6 +1241,7 @@ Transform:
   - {fileID: 79782710}
   - {fileID: 911787467}
   - {fileID: 1268776778}
+  - {fileID: 913440965}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &768726882
@@ -1501,6 +1502,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PooledPrefabsList: []
+--- !u!1 &913440964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 913440965}
+  - component: {fileID: 913440966}
+  m_Layer: 0
+  m_Name: WavesManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &913440965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 913440964}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 590754414}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &913440966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 913440964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2171159bc1ddf124081110f19a0b6be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  netState:
+    m_InternalValue: 0
+  netTimer:
+    m_InternalValue: 0
+  temporaryWave: {fileID: 11400000, guid: 34dc7421a9c9c2f41bdbc0e7c9b5ceb8, type: 2}
 --- !u!1 &954638759
 GameObject:
   m_ObjectHideFlags: 0
@@ -2861,6 +2911,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8703758955653380625, guid: 7bea00e599975ac46a13dd45eeadf9ec,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -100.30029
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

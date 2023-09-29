@@ -9,6 +9,7 @@ public class NetworkScreen : UIScreen
     [SerializeField] private GameObject m_hostBtn;
     [SerializeField] private GameObject m_stopHostBtn;
     [SerializeField] private Button m_interactWithNPCBtn;
+    [SerializeField] private TMPro.TextMeshProUGUI m_timerText;
 
     private void Awake()
     {
@@ -17,6 +18,7 @@ public class NetworkScreen : UIScreen
         GameplayEvents.onHostDisconnected += GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess += GameplayEvents_onJoinHost;
 
+        GameplayEvents.WaveTimerUpdatedEvent += GameplayEvents_WaveTimerUpdatedEvent;
         GameplayEvents.PlayerInNPCRangeEvent += GameplayEvents_PlayerInNPCRangeEvent;
     }
 
@@ -27,7 +29,13 @@ public class NetworkScreen : UIScreen
         GameplayEvents.onHostDisconnected -= GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess -= GameplayEvents_onJoinHost;
 
+        GameplayEvents.WaveTimerUpdatedEvent -= GameplayEvents_WaveTimerUpdatedEvent;
         GameplayEvents.PlayerInNPCRangeEvent -= GameplayEvents_PlayerInNPCRangeEvent;
+    }
+
+    private void GameplayEvents_WaveTimerUpdatedEvent(int intValue)
+    {
+        m_timerText.text = intValue.ToString();
     }
 
     private void GameplayEvents_PlayerInNPCRangeEvent(bool inRange)

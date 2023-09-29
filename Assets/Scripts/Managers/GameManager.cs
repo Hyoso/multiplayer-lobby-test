@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using UnityEngine;
 
-public class GameManager : Singleton<GameManager>
+public class GameManager : NetworkSingleton<GameManager>
 {
 	public Canvas canvas { get { return m_canvas; } set { } }
     public PlayerController localPlayer { get { return m_networkPlayerController; } private set { } }

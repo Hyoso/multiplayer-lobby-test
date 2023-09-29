@@ -5,9 +5,10 @@ using UnityEngine;
 [CreateAssetMenu]
 public class GameplayConfig : GenericConfig<GameplayConfig>
 {
-	[Header("Game")]
+	[Header("Gameplay")]
 	public float gameFinishCooldown = 1f;
 	public PlayerStats maxPlayerStats;
+	public float waveCooldown = 10f;
 	
 	[Header("Ads")]
 	public int minAdFrequency = 3;

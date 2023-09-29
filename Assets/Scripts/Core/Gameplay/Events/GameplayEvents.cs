@@ -115,4 +115,22 @@ public static partial class GameplayEvents
 	{
 		PlayerInNPCRangeEvent?.Invoke(inRange);
 	}
+
+	public static event BasicDelegate StartWaveEvent;
+	public static void SendStartWaveEvent()
+	{
+		StartWaveEvent?.Invoke();
+    }
+
+	public static event BasicDelegate WaveCompletedEvent;
+	public static void SendWaveCompletedEvent()
+	{
+		WaveCompletedEvent?.Invoke();
+    }
+
+	public static event IntDelegate WaveTimerUpdatedEvent;
+	public static void SendWaveTimerUpdatedEvent(int newTime)
+	{
+		WaveTimerUpdatedEvent?.Invoke(newTime);
+    }
 }
