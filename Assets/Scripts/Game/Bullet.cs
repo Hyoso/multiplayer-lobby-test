@@ -7,12 +7,16 @@ using UnityEngine;
 
 public class Bullet : NetworkBehaviour
 {
+    public bool used { get { return m_used; } }
     public float damage { get { return m_damage; } }
 
     [SerializeField] private float m_damage = 2f;
     [SerializeField] private float m_speed = 10f;
     [SerializeField] private NetworkSpriteRenderer m_feather;
     [SerializeField] private NetworkTransform m_networkTransform;
+
+    private bool m_used = false;
+
     public override void OnNetworkSpawn()
     {
         if (IsServer)
@@ -40,6 +44,7 @@ public class Bullet : NetworkBehaviour
     {
         NetworkObject netObj = GetComponent<NetworkObject>();
         netObj.Despawn(true);
+        m_used = true;
     }
 
     private void Update()

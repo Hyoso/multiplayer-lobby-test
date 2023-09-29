@@ -47,9 +47,11 @@ public class BasicCrabEnemy : TargetBase
             if (m_health.Value > 0 && collision.CompareTag(Tags.PlayerBullet))
             {
                 Bullet bullet = collision.GetComponent<Bullet>();
-                TakeDamage(bullet.damage);
-
-                bullet.HitEnemy(transform);
+                if (!bullet.used)
+                {
+                    TakeDamage(bullet.damage);
+                    bullet.HitEnemy(transform);
+                }
             }
         }
     }

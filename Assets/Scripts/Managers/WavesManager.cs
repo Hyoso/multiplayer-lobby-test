@@ -36,7 +36,6 @@ public class WavesManager : NetworkSingleton<WavesManager>
         netState.OnValueChanged += OnNetStateChanged;
         netTimer.OnValueChanged += OnNetTimerChanged;
 
-
         if (!IsServer) return;
 
         m_cooldownTimer = GameplayConfig.Instance.waveCooldown;
@@ -112,6 +111,6 @@ public class WavesManager : NetworkSingleton<WavesManager>
 
     private void SpawnWave()
     {
-
+        MonsterSpawnManager.Instance.SpawnMonsters(temporaryWave);
     }
 }

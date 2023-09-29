@@ -35,4 +35,19 @@ public class MonsterSpawnPoint : NetworkBehaviour
         NetworkObject netObj = spawnedMonster.GetComponent<NetworkObject>();
         netObj.Spawn(true);
     }
+
+    public void SpawnMonster(Transform monster)
+    {
+        if (monster == null)
+        {
+            Debug.LogError("Cannot spawn null monster");
+            return;
+        }
+
+        Transform spawnedMonster = Instantiate(monster);
+        spawnedMonster.transform.position = transform.position;
+
+        NetworkObject netObj = spawnedMonster.GetComponent<NetworkObject>();
+        netObj.Spawn(true);
+    }
 }

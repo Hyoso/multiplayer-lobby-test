@@ -23,6 +23,22 @@ public class MonsterSpawnManager : NetworkSingleton<MonsterSpawnManager>
             SpawnMonsters(1);
         }
     }
+    public void SpawnMonsters(WaveSO waveData)
+    {
+        int count = waveData.GetRandomSpawnCount();
+
+        List<MonsterSpawnPoint> spawnPointsCpy = new List<MonsterSpawnPoint>(m_monsterSpawnPoints);
+        for (int i = 0; i < count; i++)
+        {
+            if (spawnPointsCpy.Count == 0)
+            {
+                spawnPointsCpy = new List<MonsterSpawnPoint>(m_monsterSpawnPoints);
+            }
+
+            MonsterSpawnPoint spawnPoint = spawnPointsCpy.GetRandomElementAndRemove();
+            spawnPoint.SpawnMonster(waveData.GetRandomMonster().transform);
+        }
+    }
 
     public void SpawnMonsters(int count)
     {
