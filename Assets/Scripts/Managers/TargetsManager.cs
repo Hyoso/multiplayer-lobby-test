@@ -40,6 +40,11 @@ public class TargetsManager : Singleton<TargetsManager>
         {
             m_targets.Remove(target);
         }
+
+        if (m_targets.Count == 0)
+        {
+            WavesManager.Instance.WaveCompleted();
+        }
     }
 
     public void RegisterPlayerTransform(Transform player)

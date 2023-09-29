@@ -7,7 +7,7 @@ using UnityEngine.InputSystem.LowLevel;
 
 public class WavesManager : NetworkSingleton<WavesManager>
 {
-    private enum WaveState
+    public enum WaveState
     {
         COOLDOWN = 0,
         SPAWNING,
@@ -79,7 +79,7 @@ public class WavesManager : NetworkSingleton<WavesManager>
 
             if (m_waveTimer <= 0f)
             {
-                GameplayEvents.SendWaveCompletedEvent();
+                WaveFailedClientRpc();
             }
         }
         else if (m_state == WaveState.COOLDOWN)
@@ -89,9 +89,35 @@ public class WavesManager : NetworkSingleton<WavesManager>
 
             if (m_cooldownTimer <= 0f)
             {
-                GameplayEvents.SendStartWaveEvent();
+                WaveStartedClientRpc();
             }
         }
+    }
+
+    public void WaveCompleted()
+    {
+        if (IsServer)
+        {
+            WaveCompletedClientRpc();
+        }
+    }
+
+    [ClientRpc]
+    private void WaveStartedClientRpc()
+    {
+        GameplayEvents.SendStartWaveEvent();
+    }
+
+    [ClientRpc]
+    private void WaveFailedClientRpc()
+    {
+        GameplayEvents.SendWaveFailedEvent();
+    }
+
+    [ClientRpc]
+    private void WaveCompletedClientRpc()
+    {
+        GameplayEvents.SendWaveCompletedEvent();
     }
 
     private void UpdateNetTimer(float timer)

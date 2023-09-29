@@ -6,10 +6,14 @@ using UnityEngine.UI;
 
 public class NetworkScreen : UIScreen
 {
+    private const string NEXT_WAVE_TEXT = "Next Wave in:";
+    private const string WAVE_ENDS_IN_TEXT = "Wave Ends in:";
+
     [SerializeField] private GameObject m_hostBtn;
     [SerializeField] private GameObject m_stopHostBtn;
     [SerializeField] private Button m_interactWithNPCBtn;
     [SerializeField] private TMPro.TextMeshProUGUI m_timerText;
+    [SerializeField] private TMPro.TextMeshProUGUI m_waveInfoText;
 
     private void Awake()
     {
@@ -18,8 +22,24 @@ public class NetworkScreen : UIScreen
         GameplayEvents.onHostDisconnected += GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess += GameplayEvents_onJoinHost;
 
+        GameplayEvents.WaveFailedEvent += GameplayEvents_WaveFailedEvent;
+        GameplayEvents.WaveCompletedEvent += GameplayEvents_WaveCompletedEvent;
+        GameplayEvents.StartWaveEvent += GameplayEvents_StartWaveEvent;
         GameplayEvents.WaveTimerUpdatedEvent += GameplayEvents_WaveTimerUpdatedEvent;
         GameplayEvents.PlayerInNPCRangeEvent += GameplayEvents_PlayerInNPCRangeEvent;
+    }
+
+    private void Start()
+    {
+        WavesManager.WaveState state = (WavesManager.WaveState)WavesManager.Instance.netState.Value;
+        if (state == WavesManager.WaveState.COOLDOWN)
+        {
+            m_waveInfoText.text = NEXT_WAVE_TEXT;
+        }
+        else if (state == WavesManager.WaveState.SPAWNING)
+        {
+            m_waveInfoText.text = WAVE_ENDS_IN_TEXT;
+        }
     }
 
     private void OnDestroy()
@@ -29,8 +49,26 @@ public class NetworkScreen : UIScreen
         GameplayEvents.onHostDisconnected -= GameplayEvents_onHostDisconnected;
         GameplayEvents.onJoinHostSuccess -= GameplayEvents_onJoinHost;
 
+        GameplayEvents.WaveFailedEvent -= GameplayEvents_WaveFailedEvent;
+        GameplayEvents.WaveCompletedEvent -= GameplayEvents_WaveCompletedEvent;
+        GameplayEvents.StartWaveEvent -= GameplayEvents_StartWaveEvent;
         GameplayEvents.WaveTimerUpdatedEvent -= GameplayEvents_WaveTimerUpdatedEvent;
         GameplayEvents.PlayerInNPCRangeEvent -= GameplayEvents_PlayerInNPCRangeEvent;
+    }
+
+    private void GameplayEvents_StartWaveEvent()
+    {
+        m_waveInfoText.text = WAVE_ENDS_IN_TEXT;
+    }
+
+    private void GameplayEvents_WaveFailedEvent()
+    {
+        m_waveInfoText.text = NEXT_WAVE_TEXT;
+    }
+
+    private void GameplayEvents_WaveCompletedEvent()
+    {
+        m_waveInfoText.text = NEXT_WAVE_TEXT;
     }
 
     private void GameplayEvents_WaveTimerUpdatedEvent(int intValue)

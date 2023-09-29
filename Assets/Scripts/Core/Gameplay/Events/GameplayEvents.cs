@@ -128,6 +128,12 @@ public static partial class GameplayEvents
 		WaveCompletedEvent?.Invoke();
     }
 
+	public static event BasicDelegate WaveFailedEvent;
+	public static void SendWaveFailedEvent()
+	{
+		WaveFailedEvent?.Invoke();
+	}
+
 	public static event IntDelegate WaveTimerUpdatedEvent;
 	public static void SendWaveTimerUpdatedEvent(int newTime)
 	{

@@ -10,12 +10,24 @@ public class BasicCrabEnemy : TargetBase
     [SerializeField] private AnimationHelper m_animator;
     [SerializeField] private Rigidbody2D m_rigidbody2D;
     [SerializeField] private BasicStateMachine m_stateMachine;
-    
+
+    private void Awake()
+    {
+        GameplayEvents.WaveFailedEvent += GameplayEvents_WaveFailedEvent;
+    }
+
     public override void Start()
     {
         SetupStateMachine();
 
         base.Start();
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameplayEvents.WaveFailedEvent -= GameplayEvents_WaveFailedEvent;
     }
 
     protected override void PlayDeathSequence()
@@ -54,6 +66,11 @@ public class BasicCrabEnemy : TargetBase
                 }
             }
         }
+    }
+
+    private void GameplayEvents_WaveFailedEvent()
+    {
+        PlayDeathSequence();
     }
 
     private void SetupStateMachine()
