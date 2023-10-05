@@ -9,6 +9,7 @@ using Unity.Services.Friends.Exceptions;
 using Unity.Services.Friends.Models;
 using Unity.Services.Samples.Friends.UGUI;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Services.Samples.Friends
 {
@@ -36,11 +37,15 @@ namespace Unity.Services.Samples.Friends
         static FriendEntryData m_localEntryData;
 
 
+        AuthenticationServiceFacade m_AuthServiceFacade;
+
         private void Awake()
         {
+            m_AuthServiceFacade = new AuthenticationServiceFacade();
             m_localEntryData = new FriendEntryData();
             GameplayEvents.onOnlineHostStarted += GameplayEvents_onOnlineHostStarted;
             GameplayEvents.onOnlineHostStopped += GameplayEvents_onOnlineHostStopped;
+            GameplayEvents.ProfileChangedEvent += GameplayEvents_ProfileChangedEvent;
         }
 
         async void Start()
@@ -123,11 +128,42 @@ namespace Unity.Services.Samples.Friends
 
         async Task LogInAsync()
         {
-            var playerID = AuthenticationService.Instance.PlayerId;
+            try
+            {
+                await OnAuthSignIn();
+                await UpdateFriendsScreen();
+            }
+            catch (System.Exception)
+            {
+                OnSignInFailed();
+            }
+
+
             //await AuthenticationService.Instance.UpdatePlayerNameAsync("TESTER");
+
+        }
+
+        private async Task OnAuthSignIn()
+        {
+            //m_LobbyButton.interactable = true;
+            //m_UGSSetupTooltipDetector.enabled = false;
+            //m_SignInSpinner.SetActive(false);
+
+            var unityAuthenticationInitOptions =
+                m_AuthServiceFacade.GenerateAuthenticationOptions(ProfilesManager.Instance.Profile);
+
+            await m_AuthServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
+
+            Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
+
+            var playerID = AuthenticationService.Instance.PlayerId;
             var playerName = await AuthenticationService.Instance.GetPlayerNameAsync();
             m_LoggedPlayerProfile = new PlayerProfile(playerName, playerID);
+            Debug.Log($"Logged in as {m_LoggedPlayerProfile}");
+        }
 
+        private async Task UpdateFriendsScreen()
+        {
             m_localEntryData.Activity = DEFAULT_ACTIVITY;
             m_localEntryData.availability = PresenceAvailabilityOptions.ONLINE;
             string friendEntryDataJson = JsonUtility.ToJson(m_localEntryData);
@@ -138,7 +174,28 @@ namespace Unity.Services.Samples.Friends
                 DEFAULT_ACTIVITY,
                 PresenceAvailabilityOptions.ONLINE);
             RefreshAll();
+        }
+
+        private void OnSignInFailed()
+        {
+            Debug.LogError("Sign in failed");
+        }
+
+        private async void GameplayEvents_ProfileChangedEvent()
+        {
+            await m_AuthServiceFacade.SwitchProfileAndReSignInAsync(ProfilesManager.Instance.Profile);
+
+            var playerID = AuthenticationService.Instance.PlayerId;
+            var playerName = await AuthenticationService.Instance.GetPlayerNameAsync();
+            m_LoggedPlayerProfile = new PlayerProfile(playerName, playerID);
             Debug.Log($"Logged in as {m_LoggedPlayerProfile}");
+
+            await FriendsService.Instance.InitializeAsync();
+
+            await LogInAsync();
+            SubscribeToFriendsEventCallbacks();
+
+            await UpdateFriendsScreen();
         }
 
         void RefreshAll()

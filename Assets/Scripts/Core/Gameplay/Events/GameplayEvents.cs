@@ -139,4 +139,16 @@ public static partial class GameplayEvents
 	{
 		WaveTimerUpdatedEvent?.Invoke(newTime);
     }
+
+	public static event StringDelegate NewProfileSelectedEvent;
+	public static void SendNewProfileSelectedEvent(string profileName)
+	{
+		NewProfileSelectedEvent?.Invoke(profileName);
+	}
+
+	public static event BasicDelegate ProfileChangedEvent;
+	public static void SendProfileChangedEvent()
+	{
+		ProfileChangedEvent?.Invoke();
+    }
 }

@@ -12,6 +12,8 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
     private OffsetInput m_offsetInput;
     private Rigidbody2D m_rigidbody;
     private Transform m_transform;
+    private Character m_character;
+
 
     protected override void Awake()
     {
@@ -19,6 +21,7 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
 
     public override void Init()
     {
+        m_character = m_characterObject.GetComponent<Character>();
         m_offsetInput = m_characterObject.GetComponent<OffsetInput>();
         m_offsetInput.RegisterController(this);
         m_rigidbody = m_characterObject.GetComponent<Rigidbody2D>();
@@ -26,7 +29,34 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
     }
 
     public override void UpdateMovement()
-	{
+    {
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Debug.Log("send action: " + 1);
+            m_character.DoActionServerRpc(new ActionID { ID = 1 });
+        }
+
+        if (Input.GetKeyUp(KeyCode.D))
+        {
+            Debug.Log("send action: " + 5);
+            m_character.DoActionServerRpc(new ActionID { ID = 5 });
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Debug.Log("send action: " + 3);
+            m_character.DoActionServerRpc(new ActionID { ID = 3 });
+        }
+
+        if (Input.GetKeyUp(KeyCode.A))
+        {
+            Debug.Log("send action: " + 7);
+            m_character.DoActionServerRpc(new ActionID { ID = 7 });
+        }
+
+
+        return;
+
         //m_characterObject.transform.position += Vector3.up * Time.deltaTime;
         Vector3 dir = Vector3.zero;
         if (Input.GetKey(KeyCode.W))
@@ -48,7 +78,7 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
         }
 
         Vector2 moveAmount = dir.normalized * maxSpeed * Time.deltaTime;
-        m_rigidbody.MovePosition(m_rigidbody.position + moveAmount);
+        //m_character.DoMovementServerRpc(moveAmount);
     }
 
     public void OffsetControlChanged(Vector2 offset)
@@ -58,7 +88,7 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
         Vector3 dir = new Vector3(offset.x, offset.y, 0f);
         Vector3 moveAmount = dir * speed;
         moveAmount = Vector3.ClampMagnitude(moveAmount, maxSpeed);
-        m_rigidbody.velocity = moveAmount;
+        //m_rigidbody.velocity = moveAmount;
 
         //Vector3 moveAmount = dir * speed * Time.deltaTime;
         //m_transform.Translate(moveAmount, Space.World);
@@ -67,7 +97,7 @@ public class PlayerSO : CharacterBaseSO, IOffsetController
     public void OffsetControlStopped()
     {
         return;
-        m_rigidbody.velocity = Vector3.zero;
+        //m_rigidbody.velocity = Vector3.zero;
     }
 
     public void OffsetControlStart()

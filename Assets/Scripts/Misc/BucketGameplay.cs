@@ -15,7 +15,8 @@ public class BucketGameplay : BucketBase
 	public static string PASSIVE_TRINKETS = "PASSIVE_TRINKETS";
 	public static string ACTIVE_TRINKET = "ACTIVE_TRINKET";
     public static string EQUIPPED_COSMETICS = "EQUIPPED_COSMETICS";
-    
+    public static string PROFILES = "PROFILES";
+
     private string BUCKET_KEY = "BUCKET_GAMEPLAY";
 	
 	public override string GetBucketKey()
@@ -37,5 +38,6 @@ public class BucketGameplay : BucketBase
 		keyBucketDict.Add(PASSIVE_TRINKETS, this);
         keyBucketDict.Add(ACTIVE_TRINKET, this);
         keyBucketDict.Add(EQUIPPED_COSMETICS, this);
+        keyBucketDict.Add(PROFILES, this);
     }
 }
